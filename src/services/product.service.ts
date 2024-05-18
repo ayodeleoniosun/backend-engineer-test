@@ -9,36 +9,36 @@ export const index = async () => {
         .sort({createdAt: 'desc'});
 }
 
-export const myProducts = async (user: DocumentType<User>) => {
+export const myProducts = async (userId: string) => {
     return ProductModel
-        .find({userId: user.id})
+        .find({userId})
         .sort({createdAt: 'desc'});
 }
 
-export const create = async (payload: Product, user: DocumentType<User>) => {
+export const create = async (payload: Product, userId: string) => {
     const {name, description, price} = payload;
 
-    const productExists = await getProductByName(payload.name, user.id);
+    const productExists = await getProductByName(payload.name, userId);
 
     if (productExists) {
         throw new CustomException('Product already added.');
     }
 
-    return await ProductModel.create({userId: user.id, name, description, price});
+    return await ProductModel.create({userId, name, description, price});
 }
 
-export const update = async (id: string, payload: Product, user: DocumentType<User>) => {
+export const update = async (id: string, payload: Product, userId: string) => {
     const {name, description, price} = payload;
 
-    const getProduct = await getProductByName(payload.name, user.id, id, 'validate');
+    const getProduct = await getProductByName(payload.name, userId, id, 'validate');
 
     if (getProduct === 0) {
         throw new CustomException('Product not found.', StatusCodesEnum.NOT_FOUND);
     }
 
-    const productExists = await getProductByName(payload.name, user.id, id);
+    const productExists = await getProductByName(payload.name, userId, id);
 
-    if (productExists === 0) {
+    if (productExists > 0) {
         throw new CustomException('Product already added.');
     }
 
@@ -69,4 +69,14 @@ export const show = async (id: string) => {
     }
 
     return ProductModel.find({_id: id});
+}
+
+export const destroy = async (id: string, userId: string) => {
+    const getProduct = await ProductModel.countDocuments({_id: id, userId});
+
+    if (getProduct === 0) {
+        throw new CustomException('Product not found.', StatusCodesEnum.NOT_FOUND);
+    }
+
+    return ProductModel.findByIdAndDelete({_id: id, userId});
 }
