@@ -1,6 +1,6 @@
 import {StatusCodesEnum} from "../enums/status.codes.enum";
 
-class CustomException {
+class CustomException  {
     message: string;
     statusCode: number;
 
@@ -10,4 +10,4 @@ class CustomException {
     }
 }
 
-export  default CustomException;
+export default CustomException;

@@ -1,7 +1,5 @@
 import CustomException from "../utils/exceptions/custom.exception";
-import ProductModel, {Product} from "../models/product";
-import {User} from '../models/user.model';
-import {DocumentType} from "@typegoose/typegoose";
+import ProductModel, {Product} from "../models/product.model";
 import {StatusCodesEnum} from "../utils/enums/status.codes.enum";
 
 export const index = async () => {
@@ -38,7 +36,7 @@ export const update = async (id: string, payload: Product, userId: string) => {
 
     const productExists = await getProductByName(payload.name, userId, id);
 
-    if (productExists > 0) {
+    if (productExists) {
         throw new CustomException('Product already added.');
     }
 
