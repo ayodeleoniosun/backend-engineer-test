@@ -4,11 +4,9 @@ import {StatusCodesEnum} from "../utils/enums/status.codes.enum";
 
 export const register = async (req: Request, res: Response) => {
     try {
-        const user = await createUser(req.body);
-
         return res.status(StatusCodesEnum.CREATED).json({
             success: true,
-            data: user
+            data: await createUser(req.body)
         })
     } catch (error: any) {
         return res.status(StatusCodesEnum.BAD_REQUEST).json({
@@ -20,11 +18,9 @@ export const register = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
     try {
-        const user = await loginUser(req.body.email, req.body.password);
-
         return res.status(StatusCodesEnum.CREATED).json({
             success: true,
-            data: user
+            data: await loginUser(req.body.email, req.body.password),
         })
     } catch (error: any) {
         return res.status(StatusCodesEnum.BAD_REQUEST).json({
