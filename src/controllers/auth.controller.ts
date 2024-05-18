@@ -9,7 +9,7 @@ export const register = async (req: Request, res: Response) => {
             data: await createUser(req.body)
         })
     } catch (error: any) {
-        return res.status(StatusCodesEnum.BAD_REQUEST).json({
+        return res.status(error.statusCode ?? StatusCodesEnum.BAD_REQUEST).json({
             success: false,
             error: error.message,
         })
@@ -23,7 +23,7 @@ export const login = async (req: Request, res: Response) => {
             data: await loginUser(req.body.email, req.body.password),
         })
     } catch (error: any) {
-        return res.status(StatusCodesEnum.BAD_REQUEST).json({
+        return res.status(error.statusCode ?? StatusCodesEnum.BAD_REQUEST).json({
             success: false,
             error: error.message,
         })
