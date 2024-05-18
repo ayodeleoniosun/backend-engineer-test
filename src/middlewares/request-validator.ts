@@ -15,7 +15,7 @@ export const validate = (schema: AnyZodObject) => (req: Request, res: Response, 
         if (err instanceof ZodError) {
             return res.status(StatusCodesEnum.UNPROCESSABLE_ENTITY).json({
                 success: false,
-                error: err.errors[0].message,
+                message: err.errors[0].message,
             });
         }
 
