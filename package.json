@@ -4,8 +4,16 @@
   "description": "A REST API to create and manage products in a store",
   "main": "index.js",
   "scripts": {
-    "dev": "npx nodemon",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node dist/app.js",
+    "clean": "rimraf dist/*",
+    "postinstall": "tsc",
+    "logs": "heroku logs --app sandie-league --tail",
+    "build": "npm run clean && npm run postinstall",
+    "watch-node": "nodemon dist/app.js",
+    "watch-ts": "tsc -w",
+    "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
+    "test:dev": "jest --watch",
+    "test": " cross-env NODE_ENV=test nyc --reporter=text --reporter=html mocha --require ts-node/register src/test/index.ts --timeout 10000 --recursive --exit || true"
   },
   "repository": {
     "type": "git",
@@ -18,6 +26,7 @@
   },
   "homepage": "https://github.com/ayodeleoniosun/backend-engineer-test#readme",
   "dependencies": {
+    "@typegoose/typegoose": "^12.4.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
@@ -28,13 +37,15 @@
     "helmet": "^7.1.0",
     "joi": "^17.13.1",
     "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.4.0",
     "nodemailer": "^6.9.13",
     "nodemon": "^3.1.0",
     "redis": "^4.6.14",
     "supertest": "^7.0.0",
     "swagger-ui-express": "^5.0.0",
     "tslib": "^2.6.2",
-    "yamljs": "^0.3.0"
+    "yamljs": "^0.3.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@babel/core": "^7.22.11",

@@ -1,22 +1,40 @@
-import express, { Request, Response } from "express";
+import express, {Request, Response} from "express";
 import cors from "cors";
 import helmet from "helmet";
+import authRouter from './routes/auth.route';
+import "dotenv/config";
+import {config} from './config';
+import {connectToDB} from "./config/database";
 
-const app = express();
+const {port} = config;
+
+export const app = express();
 
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
 
+app.use('/api/auth', authRouter);
+
 app.use("*", (req: Request, res: Response) => {
-    const path = req.originalUrl;
-    const method = req.method;
     return res.status(404).json({
         success: false,
-        path,
-        method,
         message: 'URL does not exist.',
     });
 });
 
-export default app;
+// Global Error Handler
+app.use((err: any, req: Request, res: Response) => {
+    err.status = err.status || 'error';
+    err.statusCode = err.statusCode || 500;
+
+    res.status(err.statusCode).json({
+        success: false,
+        message: err.message,
+    });
+});
+
+app.listen(port, async () => {
+    console.log(`Server running on port ${port}`);
+    await connectToDB();
+});
