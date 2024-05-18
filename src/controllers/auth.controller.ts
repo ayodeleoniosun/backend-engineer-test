@@ -1,13 +1,14 @@
-import {createUser, loginUser} from '../services/auth.service';
 import {Request, Response} from 'express';
 import {StatusCodesEnum} from "../utils/enums/status.codes.enum";
+import {login, register} from '../services/auth.service';
+import {SuccessMessages} from '../utils/enums/success.messages';
 
-export const register = async (req: Request, res: Response) => {
+export const registerUser = async (req: Request, res: Response) => {
     try {
         return res.status(StatusCodesEnum.CREATED).json({
             success: true,
-            message: 'Registration successful. You can login now',
-            data: await createUser(req.body)
+            message: SuccessMessages.REGISTRATION_SUCCESSFUL,
+            data: await register(req.body)
         })
     } catch (error: any) {
         return res.status(error.statusCode ?? StatusCodesEnum.BAD_REQUEST).json({
@@ -17,12 +18,12 @@ export const register = async (req: Request, res: Response) => {
     }
 }
 
-export const login = async (req: Request, res: Response) => {
+export const loginUser = async (req: Request, res: Response) => {
     try {
         return res.status(StatusCodesEnum.CREATED).json({
             success: true,
-            message: 'Login successful.',
-            data: await loginUser(req.body.email, req.body.password),
+            message: SuccessMessages.LOGIN_SUCCESSFUL,
+            data: await login(req.body.email, req.body.password),
         })
     } catch (error: any) {
         return res.status(error.statusCode ?? StatusCodesEnum.BAD_REQUEST).json({

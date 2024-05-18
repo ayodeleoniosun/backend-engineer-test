@@ -3,7 +3,18 @@ import config from "./index";
 
 export async function connectToDB() {
     try {
-        await connect(config.db_uri ?? 'none');
+        const environment = process.env.NODE_ENV;
+
+        let uri;
+
+        if (environment === 'testing') {
+            uri = config.database.uri + "" + config.database.test
+        } else {
+            uri = config.database.uri + "" + config.database.production
+        }
+
+        await connect(uri ?? 'none');
+
     } catch (error) {
         console.log("Error:", error);
     }

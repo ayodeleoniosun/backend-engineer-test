@@ -1,6 +1,7 @@
-import CustomException from "../utils/exceptions/custom.exception";
+import HttpException from "../utils/exceptions/http.exception";
 import ProductModel, {Product} from "../models/product.model";
 import {StatusCodesEnum} from "../utils/enums/status.codes.enum";
+import {ErrorMessages} from "../utils/enums/error.messages";
 
 export const index = async () => {
     return ProductModel.find()
@@ -19,7 +20,7 @@ export const create = async (payload: Product, userId: string) => {
     const productExists = await getProductByName(payload.name, userId);
 
     if (productExists) {
-        throw new CustomException('Product already added.');
+        throw new HttpException(ErrorMessages.PRODUCT_ALREADY_EXISTS);
     }
 
     return await ProductModel.create({userId, name, description, price});
@@ -31,13 +32,13 @@ export const update = async (id: string, payload: Product, userId: string) => {
     const getProduct = await getProductByName(payload.name, userId, id, 'validate');
 
     if (getProduct === 0) {
-        throw new CustomException('Product not found.', StatusCodesEnum.NOT_FOUND);
+        throw new HttpException(ErrorMessages.PRODUCT_NOT_FOUND, StatusCodesEnum.NOT_FOUND);
     }
 
     const productExists = await getProductByName(payload.name, userId, id);
 
     if (productExists) {
-        throw new CustomException('Product already added.');
+        throw new HttpException(ErrorMessages.PRODUCT_ALREADY_EXISTS);
     }
 
     return ProductModel.findByIdAndUpdate(
@@ -47,13 +48,13 @@ export const update = async (id: string, payload: Product, userId: string) => {
     );
 }
 
-export const getProductByName = async (name: string, userId: string, id?: string|undefined, purpose?: string) => {
+export const getProductByName = async (name: string, userId: string, id?: string | undefined, purpose?: string) => {
     if (id) {
         if (purpose === 'validate') {
             return ProductModel.countDocuments({_id: id, userId});
         }
 
-        return ProductModel.countDocuments({"_id": {"$ne" : id}, name, userId})
+        return ProductModel.countDocuments({"_id": {"$ne": id}, name, userId})
     }
 
     return ProductModel.findOne({name, userId});
@@ -63,7 +64,7 @@ export const show = async (id: string) => {
     const getProduct = await ProductModel.countDocuments({_id: id});
 
     if (getProduct === 0) {
-        throw new CustomException('Product not found.', StatusCodesEnum.NOT_FOUND);
+        throw new HttpException(ErrorMessages.PRODUCT_NOT_FOUND, StatusCodesEnum.NOT_FOUND);
     }
 
     return ProductModel.find({_id: id});
@@ -73,7 +74,7 @@ export const destroy = async (id: string, userId: string) => {
     const getProduct = await ProductModel.countDocuments({_id: id, userId});
 
     if (getProduct === 0) {
-        throw new CustomException('Product not found.', StatusCodesEnum.NOT_FOUND);
+        throw new HttpException(ErrorMessages.PRODUCT_NOT_FOUND, StatusCodesEnum.NOT_FOUND);
     }
 
     return ProductModel.findByIdAndDelete({_id: id, userId});

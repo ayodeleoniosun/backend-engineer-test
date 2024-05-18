@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 
 @ModelOptions(schemaConfig)
 
-@pre<User>("save", async function() {
+@pre<User>("save", async function () {
     this.password = bcrypt.hashSync(this.password, 10);
 })
 
@@ -21,8 +21,8 @@ export class User {
     @prop({type: String, minlength: 8, maxLength: 32, required: true})
     public password: string;
 
-    @prop({type: String})
-    public createdAt: string;
+    @prop({type: Date})
+    public createdAt: Date;
 }
 
 const UserModel = getModelForClass(User);

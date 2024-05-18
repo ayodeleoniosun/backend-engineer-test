@@ -1,12 +1,13 @@
 import {Request, Response} from 'express';
-import {create, index, update, show, myProducts, destroy} from '../services/product.service';
+import {create, destroy, index, myProducts, show, update} from '../services/product.service';
 import {StatusCodesEnum} from "../utils/enums/status.codes.enum";
+import {SuccessMessages} from "../utils/enums/success.messages";
 
 export const allProducts = async (req: Request, res: Response) => {
     try {
         return res.status(StatusCodesEnum.OK).json({
             success: true,
-            message: 'Products successfully retrieved',
+            message: SuccessMessages.PRODUCTS_RETRIEVED,
             data: await index()
         })
     } catch (error: any) {
@@ -21,7 +22,7 @@ export const userProducts = async (req: Request, res: Response) => {
     try {
         return res.status(StatusCodesEnum.OK).json({
             success: true,
-            message: 'Products successfully retrieved',
+            message: SuccessMessages.PRODUCTS_RETRIEVED,
             data: await myProducts(res.locals.user.id)
         })
     } catch (error: any) {
@@ -36,7 +37,7 @@ export const store = async (req: Request, res: Response) => {
     try {
         return res.status(StatusCodesEnum.CREATED).json({
             success: true,
-            message: 'Product successfully created',
+            message: SuccessMessages.PRODUCT_CREATED,
             data: await create(req.body, res.locals.user.id),
         })
     } catch (error: any) {
@@ -51,7 +52,7 @@ export const updateProduct = async (req: Request, res: Response) => {
     try {
         return res.status(StatusCodesEnum.OK).json({
             success: true,
-            message: 'Product successfully updated',
+            message: SuccessMessages.PRODUCT_UPDATED,
             data: await update(req.params.id, req.body, res.locals.user.id)
         })
     } catch (error: any) {
@@ -66,7 +67,7 @@ export const showProduct = async (req: Request, res: Response) => {
     try {
         return res.status(StatusCodesEnum.OK).json({
             success: true,
-            message: 'Product successfully retrieved',
+            message: SuccessMessages.PRODUCT_RETRIEVED,
             data: await show(req.params.id)
         })
     } catch (error: any) {
@@ -83,7 +84,7 @@ export const deleteProduct = async (req: Request, res: Response) => {
 
         return res.status(StatusCodesEnum.OK).json({
             success: true,
-            message: 'Product successfully deleted'
+            message: SuccessMessages.PRODUCT_DELETED
         })
     } catch (error: any) {
         return res.status(error.statusCode ?? StatusCodesEnum.BAD_REQUEST).json({
