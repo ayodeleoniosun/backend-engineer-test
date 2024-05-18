@@ -10,9 +10,6 @@ export const registrationSchema = object({
             .trim()
             .email({
                 message: 'Invalid email supplied'
-            })
-            .refine(async (e) => {
-                
             }),
 
         password: string({required_error: 'Password is required'})
