@@ -4,7 +4,12 @@ import {User} from '../models/user.model';
 import {DocumentType} from "@typegoose/typegoose";
 import {StatusCodesEnum} from "../utils/enums/status.codes.enum";
 
-export const index = async (user: DocumentType<User>) => {
+export const index = async () => {
+    return ProductModel.find()
+        .sort({createdAt: 'desc'});
+}
+
+export const myProducts = async (user: DocumentType<User>) => {
     return ProductModel
         .find({userId: user.id})
         .sort({createdAt: 'desc'});
