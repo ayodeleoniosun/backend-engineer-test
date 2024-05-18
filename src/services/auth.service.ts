@@ -7,7 +7,7 @@ import {ErrorMessages} from '../utils/enums/error.messages';
 
 export const register = async (payload: User) => {
     const {firstname, lastname, email, password} = payload;
-
+    
     const emailExists = await getUserByEmail(email);
 
     if (emailExists) {
