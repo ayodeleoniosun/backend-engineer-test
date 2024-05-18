@@ -79,7 +79,6 @@ describe('Authentication end-to-end testing', () => {
             expect(data.message).toBe(ErrorMessages.PASSWORDS_DO_NOT_MATCH);
         });
 
-
         it('should throw an error if email already exist during registration', async () => {
             await request(app)
                 .post(`${baseUrl}/register`)
@@ -107,6 +106,62 @@ describe('Authentication end-to-end testing', () => {
 
             expect(data.success).toBeTruthy();
             expect(data.message).toBe(SuccessMessages.REGISTRATION_SUCCESSFUL);
+        });
+    });
+
+
+    describe('POST: /api/auth/login', () => {
+        it('should throw an error if user does not exist during login', async () => {
+            const response = await request(app)
+                .post(`${baseUrl}/login`)
+                .set('Accept', 'application/json')
+                .send(registrationData);
+
+            const data = JSON.parse(response.text);
+
+            expect(data.success).toBeFalsy();
+            expect(data.message).toBe(ErrorMessages.USER_NOT_FOUND);
+        });
+
+        it('should throw an error if login credentials are invalid', async () => {
+            //register user first
+
+            await request(app)
+                .post(`${baseUrl}/register`)
+                .set('Accept', 'application/json')
+                .send(registrationData);
+
+            let payload = JSON.parse(JSON.stringify(registrationData));
+            payload.password = '123456';
+
+            //attempt to login
+
+            const response = await request(app)
+                .post(`${baseUrl}/login`)
+                .set('Accept', 'application/json')
+                .send(payload);
+
+            const data = JSON.parse(response.text);
+
+            expect(data.success).toBeFalsy();
+            expect(data.message).toBe(ErrorMessages.INCORRECT_LOGIN_CREDENTIALS);
+        });
+
+        it('should login if correct credentials are supplied', async () => {
+            await request(app)
+                .post(`${baseUrl}/register`)
+                .set('Accept', 'application/json')
+                .send(registrationData);
+
+            const response = await request(app)
+                .post(`${baseUrl}/login`)
+                .set('Accept', 'application/json')
+                .send(registrationData);
+
+            const data = JSON.parse(response.text);
+
+            expect(data.success).toBeTruthy();
+            expect(data.message).toBe(SuccessMessages.LOGIN_SUCCESSFUL);
         });
     });
 });

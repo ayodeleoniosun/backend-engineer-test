@@ -35,7 +35,7 @@ describe('Authentication unit tests', () => {
 
 
     describe('Login', () => {
-        it('should throw an error if email does not exist during login', async () => {
+        it('should throw an error if user does not exist during login', async () => {
             try {
                 await login('invalidEmail@email.com', 'password');
             } catch (err: any) {
