@@ -3,7 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import authRouter from './routes/auth.route';
 import "dotenv/config";
-import {config} from './config';
+import config from './config';
 import {connectToDB} from "./config/database";
 
 const {port} = config;

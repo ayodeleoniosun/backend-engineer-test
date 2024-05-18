@@ -1,10 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-export const config = {
+export default {
     port: process.env.PORT,
-    jwt_secret: process.env.JWT_SECRET,
-    database: {
-        uri: process.env.MONGODB_URI,
-    }
+    jwt_secret:'mainstack-backend-engineer-test@2024',
+    db_uri: process.env.MONGODB_URI,
 }

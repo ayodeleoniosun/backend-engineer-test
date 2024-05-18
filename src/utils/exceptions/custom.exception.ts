@@ -4,7 +4,7 @@ class CustomException {
     message: string;
     statusCode: number;
 
-    constructor(message, statusCode = StatusCodesEnum.BAD_REQUEST) {
+    constructor(message: string, statusCode: number = StatusCodesEnum.BAD_REQUEST) {
         this.message = message;
         this.statusCode = statusCode;
     }
