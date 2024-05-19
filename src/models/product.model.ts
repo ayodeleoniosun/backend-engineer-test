@@ -16,8 +16,8 @@ export class Product {
     @prop({type: String, required: true})
     public price: string;
 
-    @prop({type: String})
-    public createdAt: string;
+    @prop({type: Date})
+    public createdAt: Date;
 }
 
 const ProductModel = getModelForClass(Product);

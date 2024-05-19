@@ -16,7 +16,7 @@ describe('Authentication unit tests', () => {
     });
 
     describe('Registration', () => {
-        it('should throw an error if email already exist during registration', async () => {
+        it('it should throw an error if email already exist during registration', async () => {
             try {
                 await register(testData);
             } catch (err: any) {
@@ -24,7 +24,7 @@ describe('Authentication unit tests', () => {
             }
         });
 
-        it('can create new user', async () => {
+        it('it can create new user', async () => {
             const response = await register(fakeData);
 
             expect(response.firstname).toBe(fakeData.firstname);
@@ -35,7 +35,7 @@ describe('Authentication unit tests', () => {
 
 
     describe('Login', () => {
-        it('should throw an error if user does not exist during login', async () => {
+        it('it should throw an error if user does not exist during login', async () => {
             try {
                 await login('invalidEmail@email.com', 'password');
             } catch (err: any) {
@@ -43,7 +43,7 @@ describe('Authentication unit tests', () => {
             }
         });
 
-        it('should throw an error if login credentials are invalid', async () => {
+        it('it should throw an error if login credentials are invalid', async () => {
             try {
                 await login(testData.email, 'password');
             } catch (err: any) {
@@ -51,7 +51,7 @@ describe('Authentication unit tests', () => {
             }
         });
 
-        it('should login if correct credentials are supplied', async () => {
+        it('it should login if correct credentials are supplied', async () => {
             const response = await login(testData.email, testData.password);
 
             expect(response).toHaveProperty('token');
