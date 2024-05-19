@@ -20,7 +20,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
 export const loginUser = async (req: Request, res: Response) => {
     try {
-        return res.status(StatusCodesEnum.CREATED).json({
+        return res.status(StatusCodesEnum.OK).json({
             success: true,
             message: SuccessMessages.LOGIN_SUCCESSFUL,
             data: await login(req.body.email, req.body.password),

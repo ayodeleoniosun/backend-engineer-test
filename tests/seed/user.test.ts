@@ -11,7 +11,7 @@ export let testData: {
 testData = {
     firstname: 'John',
     lastname: 'Doe',
-    email: 'johndoe@gmail.com',
+    email: faker.internet.email(),
     password: '12345678',
     createdAt: faker.date.soon()
 };

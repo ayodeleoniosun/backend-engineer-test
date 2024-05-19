@@ -4,11 +4,11 @@ import {ErrorMessages} from "../utils/enums/error.messages";
 export const registrationSchema = object({
     body: object({
         firstname: string({required_error: ErrorMessages.FIRSTNAME_REQUIRED})
-            .min(3, ErrorMessages.FIRSTNAME_INVALID_CHARACTER_LEGNTH)
+            .min(3, ErrorMessages.FIRSTNAME_MIN_LEGNTH_ERROR)
             .trim(),
 
         lastname: string({required_error: ErrorMessages.LASTNAME_REQUIRED})
-            .min(3, ErrorMessages.LASTNAME_INVALID_CHARACTER_LEGNTH)
+            .min(3, ErrorMessages.LASTNAME_MIN_LEGNTH_ERROR)
             .trim(),
 
         email: string({required_error: ErrorMessages.EMAIL_REQUIRED})
@@ -16,7 +16,7 @@ export const registrationSchema = object({
             .trim(),
 
         password: string({required_error: ErrorMessages.PASSWORD_REQUIRED})
-            .min(8, ErrorMessages.PASSWORD_INVALID_CHARACTER_LEGNTH),
+            .min(8, ErrorMessages.PASSWORD_MIN_LEGNTH_ERROR),
 
         password_confirmation: string({required_error: ErrorMessages.PASSWORD_CONFIRMATION_REQUIRED})
 

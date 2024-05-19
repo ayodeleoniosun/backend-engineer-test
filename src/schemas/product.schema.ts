@@ -1,19 +1,20 @@
 import {number, object, string} from "zod";
+import {ErrorMessages} from "../utils/enums/error.messages";
 
 export const createProductSchema = object({
     body: object({
-        name: string({required_error: 'Product name is required'})
-            .min(8, 'Product name cannot be less than 8 characters')
-            .max(100, 'Product name cannot be more than 100 characters')
+        name: string({required_error: ErrorMessages.PRODUCT_NAME_REQUIRED})
+            .min(8, ErrorMessages.PRODUCT_NAME_MIN_LEGNTH_ERROR)
+            .max(100, ErrorMessages.PRODUCT_NAME_MAX_LEGNTH_ERROR)
             .trim(),
 
-        description: string({required_error: 'Product description is required'})
+        description: string({required_error: ErrorMessages.PRODUCT_DESCRIPTION_REQUIRED})
             .trim()
-            .min(8, 'Product description cannot be less than 20 characters'),
+            .min(100, ErrorMessages.PRODUCT_DESCRIPTION_MIN_LEGNTH_ERROR),
 
         price: number({
-            required_error: 'Product price is required',
-            invalid_type_error: "Product price must be a number"
-        }).min(1, 'Product price must have a value.'),
+            required_error: ErrorMessages.PRODUCT_PRICE_REQUIRED,
+            invalid_type_error: ErrorMessages.PRODUCT_PRICE_VALIDITY
+        }).min(1, ErrorMessages.PRODUCT_PRICE_MIN_LEGNTH_ERROR),
     })
 });

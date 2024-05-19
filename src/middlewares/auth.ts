@@ -2,6 +2,7 @@ import {NextFunction, Request, Response} from "express";
 import HttpException from "../utils/exceptions/http.exception";
 import {StatusCodesEnum} from "../utils/enums/status.codes.enum";
 import {verifyToken} from "../utils/helpers/jwt";
+import {ErrorMessages} from "../utils/enums/error.messages";
 
 export const validateUserToken = (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -12,13 +13,13 @@ export const validateUserToken = (req: Request, res: Response, next: NextFunctio
         }
 
         if (!accessToken) {
-            throw new HttpException("You must be logged in to perform this operation", StatusCodesEnum.UNAUTHORIZED);
+            throw new HttpException(ErrorMessages.UNAUTHENTICATED_USER, StatusCodesEnum.UNAUTHORIZED);
         }
 
         const userData = verifyToken(accessToken);
 
         if (!userData) {
-            throw new HttpException('Invalid token supplied.', StatusCodesEnum.FORBIDDEN);
+            throw new HttpException(ErrorMessages.INVALID_TOKEN, StatusCodesEnum.FORBIDDEN);
         }
 
         res.locals.user = userData;
@@ -27,7 +28,7 @@ export const validateUserToken = (req: Request, res: Response, next: NextFunctio
     } catch (err: any) {
         return res.status(err.statusCode ?? StatusCodesEnum.UNAUTHORIZED).json({
             'success': false,
-            'message': err.message ?? 'You are unauthorized to perform this operation. Kindly login.'
+            'message': err.message ?? ErrorMessages.UNAUTHORIZED_ACCESS
         });
     }
 }

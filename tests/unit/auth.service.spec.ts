@@ -3,6 +3,7 @@ import {connectToDB} from "../../src/config/database";
 import UserModel from "../../src/models/user.model";
 import {fakeData, testData} from '../seed/user.test';
 import {ErrorMessages} from "../../src/utils/enums/error.messages";
+import ProductModel from "../../src/models/product.model";
 
 describe('Authentication unit tests', () => {
     beforeAll(async () => {
@@ -13,6 +14,11 @@ describe('Authentication unit tests', () => {
     beforeEach(async () => {
         await UserModel.deleteMany({});
         await register(testData);
+    });
+
+    afterAll(async () => {
+        await UserModel.deleteMany({});
+        await ProductModel.deleteMany({});
     });
 
     describe('Registration', () => {

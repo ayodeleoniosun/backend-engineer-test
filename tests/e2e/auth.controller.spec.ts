@@ -5,6 +5,8 @@ import {app} from '../../src/app';
 import {registrationData} from "../seed/user.test";
 import {SuccessMessages} from "../../src/utils/enums/success.messages";
 import {ErrorMessages} from "../../src/utils/enums/error.messages";
+import ProductModel from "../../src/models/product.model";
+import {StatusCodesEnum} from "../../src/utils/enums/status.codes.enum";
 
 describe('Authentication end-to-end testing', () => {
     beforeAll(async () => {
@@ -16,10 +18,15 @@ describe('Authentication end-to-end testing', () => {
         await UserModel.deleteMany({});
     });
 
+    afterAll(async () => {
+        await UserModel.deleteMany({});
+        await ProductModel.deleteMany({});
+    });
+
     const baseUrl = '/api/auth';
 
     describe('POST: /api/auth/register', () => {
-        it('cannot create new user if firstname is less than specified characters', async () => {
+        it('it cannot create new user if firstname is less than specified characters', async () => {
             let payload = JSON.parse(JSON.stringify(registrationData));
             payload.firstname = 'fi';
 
@@ -30,11 +37,12 @@ describe('Authentication end-to-end testing', () => {
 
             const data = JSON.parse(response.text);
 
+            expect(response.statusCode).toBe(StatusCodesEnum.UNPROCESSABLE_ENTITY);
             expect(data.success).toBeFalsy();
-            expect(data.message).toBe(ErrorMessages.FIRSTNAME_INVALID_CHARACTER_LEGNTH);
+            expect(data.message).toBe(ErrorMessages.FIRSTNAME_MIN_LEGNTH_ERROR);
         });
 
-        it('cannot create new user if invalid email is supplied', async () => {
+        it('it cannot create new user if invalid email is supplied', async () => {
             let payload = JSON.parse(JSON.stringify(registrationData));
             payload.email = 'invalidEmail';
 
@@ -45,11 +53,12 @@ describe('Authentication end-to-end testing', () => {
 
             const data = JSON.parse(response.text);
 
+            expect(response.statusCode).toBe(StatusCodesEnum.UNPROCESSABLE_ENTITY);
             expect(data.success).toBeFalsy();
             expect(data.message).toBe(ErrorMessages.INVALID_EMAIL_SUPPLIED);
         });
 
-        it('cannot create new user if password has less than 8 characters', async () => {
+        it('it cannot create new user if password has less than 8 characters', async () => {
             let payload = JSON.parse(JSON.stringify(registrationData));
             payload.password = '123456';
 
@@ -60,11 +69,12 @@ describe('Authentication end-to-end testing', () => {
 
             const data = JSON.parse(response.text);
 
+            expect(response.statusCode).toBe(StatusCodesEnum.UNPROCESSABLE_ENTITY);
             expect(data.success).toBeFalsy();
-            expect(data.message).toBe(ErrorMessages.PASSWORD_INVALID_CHARACTER_LEGNTH);
+            expect(data.message).toBe(ErrorMessages.PASSWORD_MIN_LEGNTH_ERROR);
         });
 
-        it('cannot create new user if passwords do not match', async () => {
+        it('it cannot create new user if passwords do not match', async () => {
             let payload = JSON.parse(JSON.stringify(registrationData));
             payload.password_confirmation = '123456';
 
@@ -75,11 +85,12 @@ describe('Authentication end-to-end testing', () => {
 
             const data = JSON.parse(response.text);
 
+            expect(response.statusCode).toBe(StatusCodesEnum.UNPROCESSABLE_ENTITY);
             expect(data.success).toBeFalsy();
             expect(data.message).toBe(ErrorMessages.PASSWORDS_DO_NOT_MATCH);
         });
 
-        it('should throw an error if email already exist during registration', async () => {
+        it('it should throw an error if email already exist during registration', async () => {
             await request(app)
                 .post(`${baseUrl}/register`)
                 .set('Accept', 'application/json')
@@ -92,11 +103,12 @@ describe('Authentication end-to-end testing', () => {
 
             const data = JSON.parse(response.text);
 
+            expect(response.statusCode).toBe(StatusCodesEnum.BAD_REQUEST);
             expect(data.success).toBeFalsy();
             expect(data.message).toBe(ErrorMessages.USER_ALREADY_EXISTS);
         });
 
-        it('can create new user', async () => {
+        it('it can create new user', async () => {
             const response = await request(app)
                 .post(`${baseUrl}/register`)
                 .set('Accept', 'application/json')
@@ -104,6 +116,7 @@ describe('Authentication end-to-end testing', () => {
 
             const data = JSON.parse(response.text);
 
+            expect(response.statusCode).toBe(StatusCodesEnum.CREATED);
             expect(data.success).toBeTruthy();
             expect(data.message).toBe(SuccessMessages.REGISTRATION_SUCCESSFUL);
         });
@@ -111,7 +124,7 @@ describe('Authentication end-to-end testing', () => {
 
 
     describe('POST: /api/auth/login', () => {
-        it('should throw an error if user does not exist during login', async () => {
+        it('it should throw an error if user does not exist during login', async () => {
             const response = await request(app)
                 .post(`${baseUrl}/login`)
                 .set('Accept', 'application/json')
@@ -119,11 +132,12 @@ describe('Authentication end-to-end testing', () => {
 
             const data = JSON.parse(response.text);
 
+            expect(response.statusCode).toBe(StatusCodesEnum.BAD_REQUEST);
             expect(data.success).toBeFalsy();
             expect(data.message).toBe(ErrorMessages.USER_NOT_FOUND);
         });
 
-        it('should throw an error if login credentials are invalid', async () => {
+        it('it should throw an error if login credentials are invalid', async () => {
             //register user first
 
             await request(app)
@@ -143,11 +157,12 @@ describe('Authentication end-to-end testing', () => {
 
             const data = JSON.parse(response.text);
 
+            expect(response.statusCode).toBe(StatusCodesEnum.BAD_REQUEST);
             expect(data.success).toBeFalsy();
             expect(data.message).toBe(ErrorMessages.INCORRECT_LOGIN_CREDENTIALS);
         });
 
-        it('should login if correct credentials are supplied', async () => {
+        it('it should login if correct credentials are supplied', async () => {
             await request(app)
                 .post(`${baseUrl}/register`)
                 .set('Accept', 'application/json')
@@ -160,6 +175,7 @@ describe('Authentication end-to-end testing', () => {
 
             const data = JSON.parse(response.text);
 
+            expect(response.statusCode).toBe(StatusCodesEnum.OK);
             expect(data.success).toBeTruthy();
             expect(data.message).toBe(SuccessMessages.LOGIN_SUCCESSFUL);
         });

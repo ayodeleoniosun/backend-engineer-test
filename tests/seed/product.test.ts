@@ -3,31 +3,31 @@ import {faker} from "@faker-js/faker";
 export let productData: {
     userId: string,
     name: string;
-    price: string;
+    price: number;
     description: string;
     createdAt: Date;
 };
 
 productData = {
     userId: faker.string.uuid(),
-    name: faker.lorem.word(),
-    price: faker.commerce.price(),
-    description: faker.lorem.words(10),
+    name: faker.lorem.words(2),
+    price: faker.number.int(100),
+    description: faker.lorem.words(100),
     createdAt: faker.date.soon()
 };
 
 export let createProductData: {
     userId: string,
     name: string;
-    price: string;
+    price: number;
     description: string;
     createdAt: Date;
 };
 
 createProductData = {
     userId: faker.string.uuid(),
-    name: faker.lorem.word(),
-    price: faker.commerce.price(),
-    description: faker.lorem.words(10),
+    name: faker.lorem.words(2),
+    price: faker.number.int(100),
+    description: faker.lorem.words(100),
     createdAt: faker.date.soon()
 }

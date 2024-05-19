@@ -13,8 +13,8 @@ export class Product {
     @prop({type: String, required: true})
     public description: string;
 
-    @prop({type: String, required: true})
-    public price: string;
+    @prop({type: Number, required: true})
+    public price: number;
 
     @prop({type: Date})
     public createdAt: Date;
