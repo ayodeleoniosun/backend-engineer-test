@@ -36,7 +36,9 @@ describe('Product end-to-end testing', () => {
             .set('Accept', 'application/json')
             .send(registrationData);
 
-        token = JSON.parse(loginResponse.text).data.token;
+        const data = JSON.parse(loginResponse.text);
+
+        token = data.data.token;
     });
 
     afterAll(async () => {

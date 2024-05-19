@@ -1,29 +1,76 @@
-# Backend Engineer Test
+# Products Store API
 
-Build a simple RESTful API to create and manage products in a store
+This is an authentication based RESTful API to create and manage products in a store
+## Getting Started
 
-## Authentication
-Implement token-based authentication
+* Features
+* Technologies Stack.
+* Installation
+* API Documentation
+* Testing
 
-## Requirements
-1. Use NodeJS, Express, Typescript, MongoDB and any other libraries of your choice
-2. All endpoints must be fully documented on Postman
-3. Code must be unit tested
-4. API must be containerized using Docker
+### Features
 
-## Evaluation Criteria
+* Registration of new user.
+* Login of existing user.
+* Create new products.
+* Update existing products.
+* View product details.
+* List all products
 
-1. Database design - scalability and query efficiency
-2. Clean code - redundancy and documentation
-3. Code quality - use of best practices and efficient algorithms
-4. Error handling - Appropriate error codes and messages
-5. Security - Input validation and/or sanitization
+### Technologies Stack
+* Node.js
+* Typescript.
+* Expressjs.
+* MongoDB.
+* Typegoose ORM.
+* Supertest (testing).
 
+### Installation
+#### Step 1: Clone the repository
 
-## Submission
+```shell
+git clone https://github.com/ayodeleoniosun/backend-engineer-test.git
+```
 
-Reply with the following:
+#### Step 2: Switch to the repo folder
 
-1. Link to Github repository
-2. Link to live API
-3. Link to Postman documentation
+```shell
+cd backend-engineer-test
+```
+
+#### Step 3: Install all npm packages
+
+```bash
+npm install
+npm run build
+```
+
+#### Step 4: Setup environment variable
+
+- Copy `.env.example` to `.env` i.e `cp .env.example .env`
+- Update all the variables as needed
+
+#### Step 5: Start Server
+To start the server, use the following command:
+
+```bash
+npm run dev
+```
+
+### API Documentation
+
+The Postman API collection is locally available [Here](/docs/postman_collection.json). <br/>
+
+The Postman API collection is remotely available [Here](https://documenter.getpostman.com/view/18037473/2sA3QmDa7q). <br/>
+
+### Testing
+
+An end-to-end test and unit tests are written for the routes and services. <br/>
+
+To run test, use the following command:
+
+```bash
+npm run test
+```
+
