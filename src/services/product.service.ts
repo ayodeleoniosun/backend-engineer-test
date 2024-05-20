@@ -42,17 +42,17 @@ export const update = async (id: string, payload: Product, userId: string) => {
 
     const productExists = await findExistingProductByCriteria(id, {name: payload.name, userId});
 
-    console.log(productExists);
-
     if (productExists) {
         throw new HttpException(ErrorMessages.PRODUCT_ALREADY_EXISTS, HttpStatus.CONFLICT);
     }
 
-    return ProductModel.findByIdAndUpdate(
+    const updatedProduct = ProductModel.findByIdAndUpdate(
         {_id: id},
         {name, description, price},
         {new: true}
     );
+
+    return new ProductDto(updatedProduct._id, name, description, price, updatedProduct.createdAt);
 }
 
 export const findProductByCriteria = async (criteria: object) => {
@@ -60,8 +60,9 @@ export const findProductByCriteria = async (criteria: object) => {
 }
 
 export const findExistingProductByCriteria = async (id: string, criteria: object) => {
-    console.log(criteria);
-    return ProductModel.findOne({"_id": {"$ne": id}, criteria});
+    const {name, userId} = criteria;
+
+    return ProductModel.countDocuments({"_id": {"$ne": id}, name, userId});
 }
 
 export const show = async (id: string) => {
