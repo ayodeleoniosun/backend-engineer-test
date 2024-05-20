@@ -1,12 +1,10 @@
 export class RegisterPayloadDto {
-    id: string;
     firstname: string;
     lastname: string;
     email: string;
     password: string;
 
-    constructor(id: string, firstname: string, lastname: string, email: string, password: string) {
-        this.id = id;
+    constructor(firstname: string, lastname: string, email: string, password: string) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;

@@ -20,6 +20,10 @@ export async function connectToDB() {
     }
 }
 
+export async function closeDB() {
+
+}
+
 connection.on("connected", () => {
     console.log("Database connected to:", connection.db.databaseName);
 });

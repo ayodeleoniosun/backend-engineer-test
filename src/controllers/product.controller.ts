@@ -1,6 +1,5 @@
 import {Request, Response} from 'express';
 import {create, destroy, index, myProducts, show, update} from '../services/product.service';
-import {StatusCodesEnum} from "../utils/enums/status.codes.enum";
 import {SuccessMessages} from "../utils/enums/success.messages";
 import {ResponseDto} from "../dtos/responses/response.dto";
 import {ResponseStatus} from "../dtos/responses/response.interface";
@@ -14,7 +13,7 @@ export const allProducts = async (req: Request, res: Response) => {
             await index()
         );
 
-        return res.status(StatusCodesEnum.OK).json(successResponse)
+        return res.status(HttpStatus.OK).json(successResponse)
     } catch (error: any) {
         const errorResponse = new ResponseDto(ResponseStatus.ERROR, error.message);
 
@@ -46,7 +45,7 @@ export const store = async (req: Request, res: Response) => {
             await create(req.body, res.locals.user.id)
         );
 
-        return res.status(StatusCodesEnum.CREATED).json(successResponse)
+        return res.status(HttpStatus.CREATED).json(successResponse)
     } catch (error: any) {
         const errorResponse = new ResponseDto(ResponseStatus.ERROR, error.message);
 
@@ -79,7 +78,7 @@ export const showProduct = async (req: Request, res: Response) => {
             await show(req.params.id)
         );
 
-        return res.status(StatusCodesEnum.OK).json(successResponse);
+        return res.status(HttpStatus.OK).json(successResponse);
     } catch (error: any) {
         const errorResponse = new ResponseDto(ResponseStatus.ERROR, error.message);
 
@@ -96,7 +95,7 @@ export const deleteProduct = async (req: Request, res: Response) => {
             SuccessMessages.PRODUCT_DELETED,
         );
 
-        return res.status(StatusCodesEnum.OK).json(successResponse);
+        return res.status(HttpStatus.OK).json(successResponse);
 
     } catch (error: any) {
         const errorResponse = new ResponseDto(ResponseStatus.ERROR, error.message);

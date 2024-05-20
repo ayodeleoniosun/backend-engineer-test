@@ -4,11 +4,13 @@ import helmet from "helmet";
 import "dotenv/config";
 import config from './config';
 import {connectToDB} from "./config/database";
-import {StatusCodesEnum} from "./utils/enums/status.codes.enum";
+import * as HttpStatus from 'http-status';
 
 //routes
 import authRouter from './routes/auth.route';
 import productRouter from './routes/product.route';
+import {ResponseDto} from "./dtos/responses/response.dto";
+import {ResponseStatus} from "./dtos/responses/response.interface";
 
 const {port} = config;
 
@@ -22,20 +24,18 @@ app.use('/api/auth', authRouter);
 app.use('/api/products', productRouter);
 
 app.use("*", (req: Request, res: Response) => {
-    return res.status(StatusCodesEnum.NOT_FOUND).json({
-        success: false,
-        message: 'Welcome to Product Store API',
-    });
+    const successResponse = new ResponseDto(ResponseStatus.SUCCESS, 'Welcome to Product Store API');
+
+    return res.status(HttpStatus.NOT_FOUND).json(successResponse);
 });
 
 // Global Error Handler
 app.use((err: any, req: Request, res: Response) => {
-    err.statusCode = err.statusCode || StatusCodesEnum.INTERNAL_SERVER_ERROR;
-    
-    res.status(err.statusCode).json({
-        success: false,
-        message: err.message,
-    });
+    err.statusCode = err.statusCode || HttpStatus.INTERNAL_SERVER_ERROR;
+
+    const errorResponse = new ResponseDto(ResponseStatus.ERROR, err.message);
+
+    res.status(err.statusCode).json(errorResponse);
 });
 
 app.listen(port, async () => {

@@ -1,5 +1,5 @@
 import HttpException from "../utils/exceptions/http.exception";
-import ProductModel, {Product} from "../models/product.model";
+import ProductModel from "../models/product.model";
 import {ErrorMessages} from "../utils/enums/error.messages";
 import {ProductDto} from "../dtos/product.dto";
 import * as HttpStatus from 'http-status';
@@ -28,12 +28,10 @@ export const create = async (payload: CreateProductPayloadDto, userId: string) =
 
     const createdProduct = await ProductModel.create({userId, name, description, price});
 
-    console.log(createdProduct);
-
     return new ProductDto(createdProduct._id, name, description, createdProduct.price, createdProduct.createdAt)
 }
 
-export const update = async (id: string, payload: Product, userId: string) => {
+export const update = async (id: string, payload: CreateProductPayloadDto, userId: string) => {
     const {name, description, price} = payload;
 
     const product = await findProductByCriteria({_id: id, userId});
