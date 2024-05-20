@@ -348,10 +348,10 @@ describe('Product end-to-end testing', () => {
         });
     });
 
-    describe('GET: /api/products', () => {
+    describe('GET: /api/products/all', () => {
         it('it should view all products', async () => {
             await request(app)
-                .post(`${baseUrl}`)
+                .post(`${baseUrl}/all`)
                 .set('Accept', 'application/json')
                 .set('Authorization', `Bearer ${token}`)
                 .send(createProductData);

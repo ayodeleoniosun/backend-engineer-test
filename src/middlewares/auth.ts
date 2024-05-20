@@ -3,8 +3,9 @@ import HttpException from "../utils/exceptions/http.exception";
 import {StatusCodesEnum} from "../utils/enums/status.codes.enum";
 import {verifyToken} from "../utils/helpers/jwt";
 import {ErrorMessages} from "../utils/enums/error.messages";
+import UserModel from "../models/user.model";
 
-export const validateUserToken = (req: Request, res: Response, next: NextFunction) => {
+export const validateUserToken = async (req: Request, res: Response, next: NextFunction) => {
     try {
         let accessToken;
 
@@ -18,7 +19,9 @@ export const validateUserToken = (req: Request, res: Response, next: NextFunctio
 
         const userData = verifyToken(accessToken);
 
-        if (!userData) {
+        const isValidUser = await UserModel.findById(userData.id);
+
+        if (!userData || !isValidUser) {
             throw new HttpException(ErrorMessages.INVALID_TOKEN, StatusCodesEnum.FORBIDDEN);
         }
 

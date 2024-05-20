@@ -1,6 +1,8 @@
 import {NextFunction, Request, Response} from "express";
 import {AnyZodObject, ZodError} from "zod";
-import {StatusCodesEnum} from "../utils/enums/status.codes.enum";
+import * as HttpStatus from "http-status";
+import {ResponseDto} from "../dtos/responses/response.dto";
+import {ResponseStatus} from "../dtos/responses/response.interface";
 
 export const validate = (schema: AnyZodObject) => (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -13,10 +15,9 @@ export const validate = (schema: AnyZodObject) => (req: Request, res: Response, 
         next();
     } catch (err: any) {
         if (err instanceof ZodError) {
-            return res.status(StatusCodesEnum.UNPROCESSABLE_ENTITY).json({
-                success: false,
-                message: err.errors[0].message,
-            });
+            return res.status(HttpStatus.UNPROCESSABLE_ENTITY).json(
+                new ResponseDto(ResponseStatus.ERROR, err.errors[0].message)
+            )
         }
 
         next(err);

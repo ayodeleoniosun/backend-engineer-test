@@ -16,4 +16,4 @@ RUN npm run build
 
 EXPOSE 8085
 
-CMD ["node", "dist/app.js"]
+CMD ["npx", "nodemon", "/app/src/app.ts"]

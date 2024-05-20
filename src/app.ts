@@ -31,7 +31,7 @@ app.use("*", (req: Request, res: Response) => {
 // Global Error Handler
 app.use((err: any, req: Request, res: Response) => {
     err.statusCode = err.statusCode || StatusCodesEnum.INTERNAL_SERVER_ERROR;
-
+    
     res.status(err.statusCode).json({
         success: false,
         message: err.message,

@@ -1,44 +1,51 @@
 import HttpException from "../utils/exceptions/http.exception";
 import ProductModel, {Product} from "../models/product.model";
-import {StatusCodesEnum} from "../utils/enums/status.codes.enum";
 import {ErrorMessages} from "../utils/enums/error.messages";
+import {ProductDto} from "../dtos/product.dto";
+import * as HttpStatus from 'http-status';
+import {CreateProductPayloadDto} from "../dtos/product/create.product.dto";
 
 export const index = async () => {
-    return ProductModel.find()
-        .sort({createdAt: 'desc'});
+    const products = await ProductModel.find().sort({createdAt: 'desc'});
+
+    return products.map((product) => new ProductDto(product._id, product.name, product.description, product.price, product.createdAt));
 }
 
 export const myProducts = async (userId: string) => {
-    return ProductModel
-        .find({userId})
-        .sort({createdAt: 'desc'});
+    const products = await ProductModel.find({userId}).sort({createdAt: 'desc'});
+
+    return products.map((product) => new ProductDto(product._id, product.name, product.description, product.price, product.createdAt));
 }
 
-export const create = async (payload: Product, userId: string) => {
+export const create = async (payload: CreateProductPayloadDto, userId: string) => {
     const {name, description, price} = payload;
 
-    const productExists = await getProductByName(payload.name, userId);
+    const product = await findProductByCriteria({name: payload.name, userId});
 
-    if (productExists) {
-        throw new HttpException(ErrorMessages.PRODUCT_ALREADY_EXISTS);
+    if (product) {
+        throw new HttpException(ErrorMessages.PRODUCT_ALREADY_EXISTS, HttpStatus.CONFLICT);
     }
 
-    return await ProductModel.create({userId, name, description, price});
+    const createdProduct = await ProductModel.create({userId, name, description, price});
+
+    return new ProductDto(createdProduct._id, name, description, createdProduct.price, createdProduct.createdAt)
 }
 
 export const update = async (id: string, payload: Product, userId: string) => {
     const {name, description, price} = payload;
 
-    const getProduct = await getProductByName(payload.name, userId, id, 'validate');
+    const product = await findProductByCriteria({_id: id, userId});
 
-    if (getProduct === 0) {
-        throw new HttpException(ErrorMessages.PRODUCT_NOT_FOUND, StatusCodesEnum.NOT_FOUND);
+    if (!product) {
+        throw new HttpException(ErrorMessages.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
 
-    const productExists = await getProductByName(payload.name, userId, id);
+    const productExists = await findExistingProductByCriteria(id, {name: payload.name, userId});
+
+    console.log(productExists);
 
     if (productExists) {
-        throw new HttpException(ErrorMessages.PRODUCT_ALREADY_EXISTS);
+        throw new HttpException(ErrorMessages.PRODUCT_ALREADY_EXISTS, HttpStatus.CONFLICT);
     }
 
     return ProductModel.findByIdAndUpdate(
@@ -48,34 +55,31 @@ export const update = async (id: string, payload: Product, userId: string) => {
     );
 }
 
-export const getProductByName = async (name: string, userId: string, id?: string | undefined, purpose?: string) => {
-    if (id) {
-        if (purpose === 'validate') {
-            return ProductModel.countDocuments({_id: id, userId});
-        }
+export const findProductByCriteria = async (criteria: object) => {
+    return ProductModel.findOne(criteria);
+}
 
-        return ProductModel.countDocuments({"_id": {"$ne": id}, name, userId})
-    }
-
-    return ProductModel.findOne({name, userId});
+export const findExistingProductByCriteria = async (id: string, criteria: object) => {
+    console.log(criteria);
+    return ProductModel.findOne({"_id": {"$ne": id}, criteria});
 }
 
 export const show = async (id: string) => {
-    const getProduct = await ProductModel.countDocuments({_id: id});
+    const product = await ProductModel.findById(id);
 
-    if (getProduct === 0) {
-        throw new HttpException(ErrorMessages.PRODUCT_NOT_FOUND, StatusCodesEnum.NOT_FOUND);
+    if (!product) {
+        throw new HttpException(ErrorMessages.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
 
-    return ProductModel.find({_id: id});
+    return new ProductDto(product._id, product.name, product.description, product.price, product.createdAt)
 }
 
 export const destroy = async (id: string, userId: string) => {
-    const getProduct = await ProductModel.countDocuments({_id: id, userId});
+    const product = await findProductByCriteria({_id: id, userId});
 
-    if (getProduct === 0) {
-        throw new HttpException(ErrorMessages.PRODUCT_NOT_FOUND, StatusCodesEnum.NOT_FOUND);
+    if (!product) {
+        throw new HttpException(ErrorMessages.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
 
-    return ProductModel.findByIdAndDelete({_id: id, userId});
+    return ProductModel.findByIdAndDelete(id);
 }
