@@ -19,6 +19,10 @@ export const validateUserToken = async (req: Request, res: Response, next: NextF
 
         const userData = verifyToken(accessToken);
 
+        if (typeof userData !== 'object') {
+            throw new HttpException(ErrorMessages.INVALID_TOKEN, StatusCodesEnum.FORBIDDEN);
+        }
+
         const isValidUser = await UserModel.findById(userData.id);
 
         if (!userData || !isValidUser) {
