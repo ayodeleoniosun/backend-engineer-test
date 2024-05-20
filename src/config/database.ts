@@ -1,17 +1,21 @@
-import {connect, connection} from "mongoose";
+import {connect, connection, disconnect} from "mongoose";
 import config from "./index";
+
+export const getDatabaseUri = () => {
+    const environment = process.env.NODE_ENV;
+
+    let uri: string | undefined = config.database.uri;
+
+    if (environment === 'testing') {
+        return uri + "" + config.database.test
+    }
+
+    return uri + "" + config.database.production;
+}
 
 export async function connectToDB() {
     try {
-        const environment = process.env.NODE_ENV;
-
-        let uri;
-
-        if (environment === 'testing') {
-            uri = config.database.uri + "" + config.database.test
-        } else {
-            uri = config.database.uri + "" + config.database.production
-        }
+        const uri: string = getDatabaseUri();
 
         await connect(uri ?? 'none');
 
@@ -21,7 +25,7 @@ export async function connectToDB() {
 }
 
 export async function closeDB() {
-
+    await disconnect();
 }
 
 connection.on("connected", () => {

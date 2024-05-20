@@ -1,4 +1,4 @@
-import {connectToDB} from "../../src/config/database";
+import {closeDB, connectToDB} from "../../src/config/database";
 import UserModel from "../../src/models/user.model";
 import request from "supertest";
 import {app} from '../../src/app';
@@ -13,8 +13,8 @@ import {registerPayload} from "../examples/user.test.payload";
 import {ObjectId} from "mongodb";
 
 describe('Product end-to-end testing', () => {
-    let loginResponse;
-    let token: string;
+    let loginResponse: any;
+    let token: string | undefined;
 
     beforeAll(async () => {
         process.env.NODE_ENV = 'testing';
@@ -45,6 +45,7 @@ describe('Product end-to-end testing', () => {
     afterAll(async () => {
         await UserModel.deleteMany({});
         await ProductModel.deleteMany({});
+        await closeDB();
     });
 
     const baseUrl = '/api/products';
@@ -122,6 +123,8 @@ describe('Product end-to-end testing', () => {
                 .send(payload);
 
             const data = JSON.parse(response.text);
+
+            console.log(data);
 
             expect(response.statusCode).toBe(HttpStatus.UNPROCESSABLE_ENTITY);
             expect(data.status).toBe(ResponseStatus.ERROR);
@@ -250,8 +253,7 @@ describe('Product end-to-end testing', () => {
             const response = await request(app)
                 .delete(`${baseUrl}/${invalidProductId}`)
                 .set('Accept', 'application/json')
-                .set('Authorization', `Bearer ${token}`)
-                .send();
+                .set('Authorization', `Bearer ${token}`);
 
             const data = JSON.parse(response.text);
 
@@ -272,8 +274,7 @@ describe('Product end-to-end testing', () => {
             const response = await request(app)
                 .delete(`${baseUrl}/${productId}`)
                 .set('Accept', 'application/json')
-                .set('Authorization', `Bearer ${token}`)
-                .send();
+                .set('Authorization', `Bearer ${token}`);
 
             const data = JSON.parse(response.text);
 
@@ -290,8 +291,7 @@ describe('Product end-to-end testing', () => {
             const response = await request(app)
                 .get(`${baseUrl}/${invalidProductId}`)
                 .set('Accept', 'application/json')
-                .set('Authorization', `Bearer ${token}`)
-                .send();
+                .set('Authorization', `Bearer ${token}`);
 
             const data = JSON.parse(response.text);
 
@@ -312,8 +312,7 @@ describe('Product end-to-end testing', () => {
             const response = await request(app)
                 .get(`${baseUrl}/${productId}`)
                 .set('Accept', 'application/json')
-                .set('Authorization', `Bearer ${token}`)
-                .send();
+                .set('Authorization', `Bearer ${token}`);
 
             const data = JSON.parse(response.text);
 
@@ -336,8 +335,7 @@ describe('Product end-to-end testing', () => {
             const response = await request(app)
                 .get(`${baseUrl}/${productId}`)
                 .set('Accept', 'application/json')
-                .set('Authorization', `Bearer ${token}`)
-                .send();
+                .set('Authorization', `Bearer ${token}`);
 
             const data = JSON.parse(response.text);
 
@@ -369,8 +367,7 @@ describe('Product end-to-end testing', () => {
             const response = await request(app)
                 .get(`${baseUrl}`)
                 .set('Accept', 'application/json')
-                .set('Authorization', `Bearer ${token}`)
-                .send();
+                .set('Authorization', `Bearer ${token}`);
 
             const data = JSON.parse(response.text);
 

@@ -1,4 +1,4 @@
-import {connectToDB} from "../../src/config/database";
+import {closeDB, connectToDB} from "../../src/config/database";
 import UserModel from "../../src/models/user.model";
 import request from "supertest";
 import {app} from '../../src/app';
@@ -22,6 +22,7 @@ describe('Authentication end-to-end testing', () => {
     afterAll(async () => {
         await UserModel.deleteMany({});
         await ProductModel.deleteMany({});
+        await closeDB();
     });
 
     const baseUrl = '/api/auth';

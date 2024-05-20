@@ -1,5 +1,5 @@
 import {login, register} from '../../src/services/auth.service';
-import {connectToDB} from "../../src/config/database";
+import {closeDB, connectToDB} from "../../src/config/database";
 import UserModel from "../../src/models/user.model";
 import {registerPayload} from '../examples/user.test.payload';
 import {ErrorMessages} from "../../src/utils/enums/error.messages";
@@ -20,6 +20,7 @@ describe('Authentication unit tests', () => {
     afterAll(async () => {
         await UserModel.deleteMany({});
         await ProductModel.deleteMany({});
+        await closeDB();
     });
 
     describe('Registration', () => {
@@ -42,7 +43,7 @@ describe('Authentication unit tests', () => {
             expect(response.email).toBe(payload.email);
         });
     });
-    
+
     describe('Login', () => {
         it('it should throw an error if user does not exist during login', async () => {
             try {

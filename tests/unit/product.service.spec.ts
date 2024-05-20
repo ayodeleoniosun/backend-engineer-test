@@ -1,4 +1,4 @@
-import {connectToDB} from "../../src/config/database";
+import {closeDB, connectToDB} from "../../src/config/database";
 import ProductModel from "../../src/models/product.model";
 import {registerPayload} from '../examples/user.test.payload';
 import {register} from "../../src/services/auth.service";
@@ -26,6 +26,7 @@ describe('Product unit tests', () => {
     afterAll(async () => {
         await UserModel.deleteMany({});
         await ProductModel.deleteMany({});
+        await closeDB();
     });
 
     describe('All Products', () => {
@@ -166,7 +167,7 @@ describe('Product unit tests', () => {
         it('it should delete product', async () => {
             const createProduct = await create(createProductPayload, user.id);
             const response = await destroy(createProduct.id, user.id);
-           
+
             expect(response!.id.toString()).toBe(createProduct.id.toString());
             expect(response!.name).toBe(createProduct.name);
             expect(response!.description).toBe(createProduct.description);

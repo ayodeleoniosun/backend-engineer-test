@@ -5,5 +5,6 @@ export enum SuccessMessages {
     PRODUCT_CREATED = 'Product successfully created',
     PRODUCT_UPDATED = 'Product successfully updated',
     PRODUCT_RETRIEVED = 'Product successfully retrieved',
-    PRODUCT_DELETED = 'Product successfully deleted'
+    PRODUCT_DELETED = 'Product successfully deleted',
+    WELCOME = 'Welcome to Product Store API'
 }

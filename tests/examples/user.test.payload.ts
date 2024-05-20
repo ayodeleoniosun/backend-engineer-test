@@ -15,3 +15,13 @@ registerPayload = {
     password: '12345678',
     password_confirmation: '12345678',
 };
+
+export let loginPayload: {
+    email: string;
+    password: string;
+};
+
+loginPayload = {
+    email: faker.internet.email(),
+    password: '12345678',
+};
