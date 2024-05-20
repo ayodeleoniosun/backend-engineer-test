@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  node-app:
+    build: .
+    image: node-app
+    environment:
+      - MONGODB_URL=mongodb://mongodb:27017/store
+    ports:
+      - '8085:8085'
+    depends_on:
+      - mongodb
+    volumes:
+      - .:/src
+    networks:
+      - node-network
+
+  mongodb:
+    image: mongo:6-jammy
+    ports:
+      - '27017:27017'
+    volumes:
+      - db_data:/data/db
+    networks:
+      - node-network
+
+volumes:
+  db_data:
+
+networks:
+  node-network:
+    driver: bridge

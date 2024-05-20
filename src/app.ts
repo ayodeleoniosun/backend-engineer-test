@@ -24,7 +24,7 @@ app.use('/api/products', productRouter);
 app.use("*", (req: Request, res: Response) => {
     return res.status(StatusCodesEnum.NOT_FOUND).json({
         success: false,
-        message: 'Endpoint does not exist.',
+        message: 'Welcome to Product Store API',
     });
 });
 

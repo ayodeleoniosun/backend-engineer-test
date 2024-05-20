@@ -39,23 +39,15 @@ git clone https://github.com/ayodeleoniosun/backend-engineer-test.git
 cd backend-engineer-test
 ```
 
-#### Step 3: Install all npm packages
-
-```bash
-npm install
-npm run build
-```
-
-#### Step 4: Setup environment variable
+#### Step 3: Setup environment variable
 
 - Copy `.env.example` to `.env` i.e `cp .env.example .env`
 - Update all the variables as needed
 
-#### Step 5: Start Server
-To start the server, use the following command:
+#### Step 4: Dockerize app
 
 ```bash
-npm run dev
+bash setup.sh
 ```
 
 ### API Documentation
@@ -71,6 +63,6 @@ An end-to-end test and unit tests are written for the routes and services. <br/>
 To run test, use the following command:
 
 ```bash
-npm run test
+docker-compose exec app npm run test
 ```
 
