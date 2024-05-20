@@ -1,10 +1,9 @@
 {
 	"info": {
-		"_postman_id": "c2c0f42a-7dda-4b05-9412-191b67569915",
-		"name": "Product Store",
+		"_postman_id": "9870d0aa-737a-4a4d-abab-733ff67b7b01",
+		"name": "Product Store API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "27186209",
-		"_collection_link": "https://crimson-meadow-647641.postman.co/workspace/My-Workspace~38bdf15e-8e41-49ac-8855-fcd93940b694/collection/27186209-c2c0f42a-7dda-4b05-9412-191b67569915?action=share&source=collection_link&creator=27186209"
+		"_exporter_id": "18037473"
 	},
 	"item": [
 		{
@@ -17,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"lastname\": \"Doe\",\n    \"password\": \"johndoe@2024\",\n    \"email\": \"ayodeleoniosun64@gmail.com\",\n    \"password_confirmation\": \"johndoe@2024\"\n}",
+							"raw": "{\n    \"firstname\": \"John\",\n    \"lastname\": \"Doe\",\n    \"password\": \"johndoe@2024\",\n    \"email\": \"ayodeleoniosun64@gmail.com\",\n    \"password_confirmation\": \"johndoe@2024\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -51,11 +50,17 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseUrl}}/auth/register",
+									"raw": "http://127.0.0.1:3001/api/auth/register",
+									"protocol": "http",
 									"host": [
-										"{{baseUrl}}"
+										"127",
+										"0",
+										"0",
+										"1"
 									],
+									"port": "3001",
 									"path": [
+										"api",
 										"auth",
 										"register"
 									]
@@ -515,11 +520,17 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseUrl}}/auth/login",
+									"raw": "http://127.0.0.1:3001/api/auth/login",
+									"protocol": "http",
 									"host": [
-										"{{baseUrl}}"
+										"127",
+										"0",
+										"0",
+										"1"
 									],
+									"port": "3001",
 									"path": [
+										"api",
 										"auth",
 										"login"
 									]
@@ -753,15 +764,21 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{token}}"
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NGE2YWVkNGQ4NTczNWVjMmU5ZTBkOCIsImVtYWlsIjoiYXlvZGVsZW9uaW9zdW42NEBnbWFpbC5jb20iLCJpYXQiOjE3MTYxNTMyOTMsImV4cCI6MTcxNjIzOTY5M30.P2IzunzUQ7TaCCirgOarLxbiB5jho_owtvBgEAQTrHc"
 									}
 								],
 								"url": {
-									"raw": "{{baseUrl}}/products",
+									"raw": "http://127.0.0.1:3001/api/products",
+									"protocol": "http",
 									"host": [
-										"{{baseUrl}}"
+										"127",
+										"0",
+										"0",
+										"1"
 									],
+									"port": "3001",
 									"path": [
+										"api",
 										"products"
 									]
 								}
@@ -881,15 +898,21 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{token}}"
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NGE2YWVkNGQ4NTczNWVjMmU5ZTBkOCIsImVtYWlsIjoiYXlvZGVsZW9uaW9zdW42NEBnbWFpbC5jb20iLCJpYXQiOjE3MTYxNTMyOTMsImV4cCI6MTcxNjIzOTY5M30.P2IzunzUQ7TaCCirgOarLxbiB5jho_owtvBgEAQTrHc"
 									}
 								],
 								"url": {
-									"raw": "{{baseUrl}}/products/user",
+									"raw": "http://127.0.0.1:3001/api/products/user",
+									"protocol": "http",
 									"host": [
-										"{{baseUrl}}"
+										"127",
+										"0",
+										"0",
+										"1"
 									],
+									"port": "3001",
 									"path": [
+										"api",
 										"products",
 										"user"
 									]
@@ -1010,15 +1033,21 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{token}}"
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NGE2YWVkNGQ4NTczNWVjMmU5ZTBkOCIsImVtYWlsIjoiYXlvZGVsZW9uaW9zdW42NEBnbWFpbC5jb20iLCJpYXQiOjE3MTYxNTMyOTMsImV4cCI6MTcxNjIzOTY5M30.P2IzunzUQ7TaCCirgOarLxbiB5jho_owtvBgEAQTrHc"
 									}
 								],
 								"url": {
-									"raw": "{{baseUrl}}/products/6648110f84b57ab108ca9ec8",
+									"raw": "http://127.0.0.1:3001/api/products/6648110f84b57ab108ca9ec8",
+									"protocol": "http",
 									"host": [
-										"{{baseUrl}}"
+										"127",
+										"0",
+										"0",
+										"1"
 									],
+									"port": "3001",
 									"path": [
+										"api",
 										"products",
 										"6648110f84b57ab108ca9ec8"
 									]
@@ -1252,7 +1281,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{token}}"
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NGE2YWVkNGQ4NTczNWVjMmU5ZTBkOCIsImVtYWlsIjoiYXlvZGVsZW9uaW9zdW42NEBnbWFpbC5jb20iLCJpYXQiOjE3MTYxNTMyOTMsImV4cCI6MTcxNjIzOTY5M30.P2IzunzUQ7TaCCirgOarLxbiB5jho_owtvBgEAQTrHc"
 									}
 								],
 								"body": {
@@ -1265,11 +1294,17 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseUrl}}/products",
+									"raw": "http://127.0.0.1:3001/api/products",
+									"protocol": "http",
 									"host": [
-										"{{baseUrl}}"
+										"127",
+										"0",
+										"0",
+										"1"
 									],
+									"port": "3001",
 									"path": [
+										"api",
 										"products"
 									]
 								}
@@ -1624,7 +1659,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{token}}"
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NGE2YWVkNGQ4NTczNWVjMmU5ZTBkOCIsImVtYWlsIjoiYXlvZGVsZW9uaW9zdW42NEBnbWFpbC5jb20iLCJpYXQiOjE3MTYxNTMyOTMsImV4cCI6MTcxNjIzOTY5M30.P2IzunzUQ7TaCCirgOarLxbiB5jho_owtvBgEAQTrHc"
 									}
 								],
 								"body": {
@@ -1637,11 +1672,17 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseUrl}}/products/664886eb4804009924013f94",
+									"raw": "http://127.0.0.1:3001/api/products/664886eb4804009924013f94",
+									"protocol": "http",
 									"host": [
-										"{{baseUrl}}"
+										"127",
+										"0",
+										"0",
+										"1"
 									],
+									"port": "3001",
 									"path": [
+										"api",
 										"products",
 										"664886eb4804009924013f94"
 									]
@@ -2108,7 +2149,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "{{token}}"
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NGE2YWVkNGQ4NTczNWVjMmU5ZTBkOCIsImVtYWlsIjoiYXlvZGVsZW9uaW9zdW42NEBnbWFpbC5jb20iLCJpYXQiOjE3MTYxNTMyOTMsImV4cCI6MTcxNjIzOTY5M30.P2IzunzUQ7TaCCirgOarLxbiB5jho_owtvBgEAQTrHc"
 									}
 								],
 								"body": {
@@ -2121,11 +2162,17 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseUrl}}/products/66485a117c0def0ce0f346f4",
+									"raw": "http://127.0.0.1:3001/api/products/66485a117c0def0ce0f346f4",
+									"protocol": "http",
 									"host": [
-										"{{baseUrl}}"
+										"127",
+										"0",
+										"0",
+										"1"
 									],
+									"port": "3001",
 									"path": [
+										"api",
 										"products",
 										"66485a117c0def0ce0f346f4"
 									]
@@ -2354,12 +2401,12 @@
 	"variable": [
 		{
 			"key": "baseUrl",
-			"value": "http://127.0.0.1:3001/api",
+			"value": "http://127.0.0.1:8085/api",
 			"type": "string"
 		},
 		{
 			"key": "token",
-			"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NGE2YWVkNGQ4NTczNWVjMmU5ZTBkOCIsImVtYWlsIjoiYXlvZGVsZW9uaW9zdW42NEBnbWFpbC5jb20iLCJpYXQiOjE3MTYxNTMyOTMsImV4cCI6MTcxNjIzOTY5M30.P2IzunzUQ7TaCCirgOarLxbiB5jho_owtvBgEAQTrHc",
+			"value": "Bearer {{token goes here}}",
 			"type": "string"
 		}
 	]
