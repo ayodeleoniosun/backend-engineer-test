@@ -124,8 +124,6 @@ describe('Product end-to-end testing', () => {
 
             const data = JSON.parse(response.text);
 
-            console.log(data);
-
             expect(response.statusCode).toBe(HttpStatus.UNPROCESSABLE_ENTITY);
             expect(data.status).toBe(ResponseStatus.ERROR);
             expect(data.message).toBe(ErrorMessages.PRODUCT_DESCRIPTION_MIN_LEGNTH_ERROR);
