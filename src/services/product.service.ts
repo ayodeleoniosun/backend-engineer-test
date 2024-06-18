@@ -1,84 +1,86 @@
-import HttpException from "../utils/exceptions/http.exception";
+import {Service} from "typedi";
+import {ProductRepository} from "../repositories/product.repository";
 import ProductModel from "../models/product.model";
+import {ProductModelDto} from "../dtos/models/product.model.dto";
+import HttpException from "../utils/exceptions/http.exception";
 import {ErrorMessages} from "../utils/enums/error.messages";
-import {ProductDto} from "../dtos/product.dto";
 import * as HttpStatus from 'http-status';
-import {CreateProductPayloadDto} from "../dtos/product/create.product.dto";
+import {ProductDto} from "../dtos/requests/product.dto";
 
-export const index = async () => {
-    const products = await ProductModel.find().sort({createdAt: 'desc'});
-
-    return products.map((product) => new ProductDto(product._id, product.name, product.description, product.price, product.createdAt));
-}
-
-export const myProducts = async (userId: string) => {
-    const products = await ProductModel.find({userId}).sort({createdAt: 'desc'});
-
-    return products.map((product) => new ProductDto(product._id, product.name, product.description, product.price, product.createdAt));
-}
-
-export const create = async (payload: CreateProductPayloadDto, userId: string) => {
-    const {name, description, price} = payload;
-
-    const product = await findProductByCriteria({name: payload.name, userId});
-
-    if (product) {
-        throw new HttpException(ErrorMessages.PRODUCT_ALREADY_EXISTS, HttpStatus.CONFLICT);
+@Service()
+export class ProductService {
+    public constructor(private productRepository: ProductRepository) {
     }
 
-    const createdProduct = await ProductModel.create({userId, name, description, price});
+    async index(): Promise<ProductModel[]> {
+        const products = await this.productRepository.findAllProducts();
 
-    return new ProductDto(createdProduct._id, name, description, createdProduct.price, createdProduct.createdAt)
-}
-
-export const update = async (id: string, payload: CreateProductPayloadDto, userId: string) => {
-    const {name, description, price} = payload;
-
-    const product = await findProductByCriteria({_id: id, userId});
-
-    if (!product) {
-        throw new HttpException(ErrorMessages.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
+        return products.map((product) => new ProductModelDto(product._id, product.name, product.description, product.price, product.createdAt));
     }
 
-    const productExists = await findExistingProductByName(id, payload.name, userId);
+    async myProducts(userId: string): Promise<ProductModel[]> {
+        const products = await this.productRepository.findUserProducts(userId);
 
-    if (productExists) {
-        throw new HttpException(ErrorMessages.PRODUCT_ALREADY_EXISTS, HttpStatus.CONFLICT);
+        return products.map((product) => new ProductModelDto(product._id, product.name, product.description, product.price, product.createdAt));
     }
 
-    const updatedProduct = ProductModel.findByIdAndUpdate(
-        {_id: id},
-        {name, description, price},
-        {new: true}
-    );
+    async create(payload: ProductDto, userId: string): Promise<ProductModelDto> {
+        const {name, description, price} = payload;
 
-    return new ProductDto(updatedProduct._id, name, description, price, updatedProduct.createdAt);
-}
+        const product = await this.productRepository.findProductByCriteria({name: payload.name, userId});
 
-export const findProductByCriteria = async (criteria: object) => {
-    return ProductModel.findOne(criteria);
-}
+        if (product) {
+            throw new HttpException(ErrorMessages.PRODUCT_ALREADY_EXISTS, HttpStatus.CONFLICT);
+        }
 
-export const findExistingProductByName = async (id: string, name: string, userId: string) => {
-    return ProductModel.findOne({"_id": {"$ne": id}, name, userId});
-}
+        const {_id, createdAt} = await this.productRepository.create({userId, name, description, price});
 
-export const show = async (id: string) => {
-    const product = await ProductModel.findById(id);
-
-    if (!product) {
-        throw new HttpException(ErrorMessages.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
+        return new ProductModelDto(_id, name, description, price, createdAt)
     }
 
-    return new ProductDto(product._id, product.name, product.description, product.price, product.createdAt)
-}
+    async update(id: string, payload: ProductDto, userId: string) {
+        const {name, description, price} = payload;
 
-export const destroy = async (id: string, userId: string) => {
-    const product = await findProductByCriteria({_id: id, userId});
+        const product = await this.productRepository.findProductByCriteria({_id: id, userId});
 
-    if (!product) {
-        throw new HttpException(ErrorMessages.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
+        if (!product) {
+            throw new HttpException(ErrorMessages.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
+        }
+
+        const productExists = await this.productRepository.findExistingProductByName(id, payload.name, userId);
+
+        if (productExists) {
+            throw new HttpException(ErrorMessages.PRODUCT_ALREADY_EXISTS, HttpStatus.CONFLICT);
+        }
+
+        const updatedProduct = ProductModel.findByIdAndUpdate(
+            {_id: id},
+            {name, description, price},
+            {new: true}
+        );
+
+        return new ProductModelDto(updatedProduct._id, name, description, price, updatedProduct.createdAt);
     }
 
-    return ProductModel.findByIdAndDelete(id);
+    async show(id: string) {
+        const product = await this.productRepository.findById(id);
+
+        if (!product) {
+            throw new HttpException(ErrorMessages.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
+        }
+
+        const {_id, name, description, price, createdAt} = product;
+
+        return new ProductModelDto(_id, name, description, price, createdAt)
+    }
+
+    async destroy(id: string, userId: string) {
+        const product = await this.productRepository.findProductByCriteria({_id: id, userId});
+
+        if (!product) {
+            throw new HttpException(ErrorMessages.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
+        }
+
+        return ProductModel.findByIdAndDelete(id);
+    }
 }

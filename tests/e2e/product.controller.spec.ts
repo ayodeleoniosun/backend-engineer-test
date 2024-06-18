@@ -64,7 +64,7 @@ describe('Product end-to-end testing', () => {
             expect(data.message).toBe(ErrorMessages.UNAUTHENTICATED_USER);
         });
 
-        it('it should throw an error if invalid authentication token is supplied', async () => {
+        it('it should throw an error if invalid requests token is supplied', async () => {
             const response = await request(app)
                 .post(`${baseUrl}`)
                 .set('Accept', 'application/json')

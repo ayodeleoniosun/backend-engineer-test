@@ -1,18 +1,18 @@
 import express, {Request, Response} from "express";
 import cors from "cors";
+import 'reflect-metadata';
 import helmet from "helmet";
 import "dotenv/config";
-import config from './config';
 import * as HttpStatus from 'http-status';
+import {useContainer as routingUseContainer, useExpressServer} from 'routing-controllers';
+import {Container} from 'typedi';
 
-//routes
-import authRouter from './routes/auth.route';
-import productRouter from './routes/product.route';
 import {ResponseDto} from "./dtos/responses/response.dto";
 import {ResponseStatus} from "./dtos/responses/response.interface";
 import {SuccessMessages} from "./utils/enums/success.messages";
+import path from "path";
 
-const {port} = config;
+routingUseContainer(Container);
 
 export const app = express();
 
@@ -20,20 +20,17 @@ app.use(cors());
 app.use(helmet());
 app.use(express.json());
 
-app.use('/api/auth', authRouter);
-app.use('/api/products', productRouter);
+useExpressServer(app, {
+    defaultErrorHandler: false,
+    routePrefix: '/api',
+    cors: true,
+    controllers: [path.join(__dirname, '/controllers/*.ts')],
+    middlewares: [path.join(__dirname, '/middlewares/*.ts')],
+});
 
-app.use("*", (req: Request, res: Response) => {
+
+app.get("/api", (req: Request, res: Response) => {
     const successResponse = new ResponseDto(ResponseStatus.SUCCESS, SuccessMessages.WELCOME);
 
     return res.status(HttpStatus.OK).json(successResponse);
-});
-
-// Global Error Handler
-app.use((err: any, req: Request, res: Response) => {
-    err.statusCode = err.statusCode || HttpStatus.INTERNAL_SERVER_ERROR;
-
-    const errorResponse = new ResponseDto(ResponseStatus.ERROR, err.message);
-
-    res.status(err.statusCode).json(errorResponse);
 });

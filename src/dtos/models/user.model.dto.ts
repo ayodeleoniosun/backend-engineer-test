@@ -1,4 +1,4 @@
-export class UserDto {
+export class UserModelDto {
     id: string;
     firstname: string;
     lastname: string;

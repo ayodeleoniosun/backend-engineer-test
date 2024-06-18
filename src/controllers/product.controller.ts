@@ -1,105 +1,115 @@
 import {Request, Response} from 'express';
-import {create, destroy, index, myProducts, show, update} from '../services/product.service';
+import {ProductService} from '../services/product.service';
 import {SuccessMessages} from "../utils/enums/success.messages";
 import {ResponseDto} from "../dtos/responses/response.dto";
 import {ResponseStatus} from "../dtos/responses/response.interface";
 import * as HttpStatus from 'http-status';
+import {Body, Delete, Get, JsonController, Param, Post, Put, Res, UseBefore} from "routing-controllers";
+import {Service} from "typedi";
+import {AuthenticateUser} from "../middlewares/auth.middleware";
+import {ProductDto} from "../dtos/requests/product.dto";
 
-export const allProducts = async (req: Request, res: Response) => {
-    try {
-        const successResponse = new ResponseDto(
-            ResponseStatus.SUCCESS,
-            SuccessMessages.PRODUCTS_RETRIEVED,
-            await index()
-        );
-
-        return res.status(HttpStatus.OK).json(successResponse)
-    } catch (error: any) {
-        const errorResponse = new ResponseDto(ResponseStatus.ERROR, error.message);
-
-        return res.status(error.statusCode ?? HttpStatus.BAD_REQUEST).json(errorResponse)
+@JsonController('/products')
+@Service()
+export class ProductController {
+    public constructor(private productService: ProductService) {
     }
-}
 
-export const userProducts = async (req: Request, res: Response) => {
-    try {
-        const successResponse = new ResponseDto(
-            ResponseStatus.SUCCESS,
-            SuccessMessages.PRODUCTS_RETRIEVED,
-            await myProducts(res.locals.user.id)
-        );
+    @Get('/all')
+    async allProducts(@Body() req: Request, @Res() res: Response) {
+        try {
+            const products = await this.productService.index();
 
-        return res.status(HttpStatus.OK).json(successResponse);
-    } catch (error: any) {
-        const errorResponse = new ResponseDto(ResponseStatus.ERROR, error.message);
+            const successResponse = new ResponseDto(ResponseStatus.SUCCESS, SuccessMessages.PRODUCTS_RETRIEVED, products);
 
-        return res.status(error.statusCode ?? HttpStatus.BAD_REQUEST).json(errorResponse);
+            return res.status(HttpStatus.OK).json(successResponse)
+        } catch (error: any) {
+            const errorResponse = new ResponseDto(ResponseStatus.ERROR, error.message);
+
+            return res.status(error.statusCode ?? HttpStatus.BAD_REQUEST).json(errorResponse)
+        }
     }
-}
 
-export const store = async (req: Request, res: Response) => {
-    try {
-        const successResponse = new ResponseDto(
-            ResponseStatus.SUCCESS,
-            SuccessMessages.PRODUCT_CREATED,
-            await create(req.body, res.locals.user.id)
-        );
+    @Get('/')
+    @UseBefore(AuthenticateUser)
+    async userProducts(@Body() req: Request, @Res() res: Response) {
+        try {
+            const products = await this.productService.myProducts(res.locals.user.id);
 
-        return res.status(HttpStatus.CREATED).json(successResponse)
-    } catch (error: any) {
-        const errorResponse = new ResponseDto(ResponseStatus.ERROR, error.message);
+            const successResponse = new ResponseDto(ResponseStatus.SUCCESS, SuccessMessages.PRODUCTS_RETRIEVED, products);
 
-        return res.status(error.statusCode ?? HttpStatus.BAD_REQUEST).json(errorResponse);
+            return res.status(HttpStatus.OK).json(successResponse);
+        } catch (error: any) {
+            const errorResponse = new ResponseDto(ResponseStatus.ERROR, error.message);
+
+            return res.status(error.statusCode ?? HttpStatus.BAD_REQUEST).json(errorResponse);
+        }
     }
-}
 
-export const updateProduct = async (req: Request, res: Response) => {
-    try {
-        const successResponse = new ResponseDto(
-            ResponseStatus.SUCCESS,
-            SuccessMessages.PRODUCT_UPDATED,
-            await update(req.params.id, req.body, res.locals.user.id)
-        );
+    @Post('/')
+    @UseBefore(AuthenticateUser)
+    async store(@Body() productDto: ProductDto, @Res() res: Response) {
+        try {
+            const product = await this.productService.create(productDto, res.locals.user.id);
 
-        return res.status(HttpStatus.OK).json(successResponse);
+            const successResponse = new ResponseDto(ResponseStatus.SUCCESS, SuccessMessages.PRODUCT_CREATED, product);
 
-    } catch (error: any) {
-        const errorResponse = new ResponseDto(ResponseStatus.ERROR, error.message);
+            return res.status(HttpStatus.CREATED).json(successResponse)
+        } catch (error: any) {
+            const errorResponse = new ResponseDto(ResponseStatus.ERROR, error.message);
 
-        return res.status(error.statusCode ?? HttpStatus.BAD_REQUEST).json(errorResponse);
+            return res.status(error.statusCode ?? HttpStatus.BAD_REQUEST).json(errorResponse);
+        }
     }
-}
 
-export const showProduct = async (req: Request, res: Response) => {
-    try {
-        const successResponse = new ResponseDto(
-            ResponseStatus.SUCCESS,
-            SuccessMessages.PRODUCT_RETRIEVED,
-            await show(req.params.id)
-        );
+    @Put('/:id')
+    @UseBefore(AuthenticateUser)
+    async updateProduct(@Param('id') id: string, @Body() productDto: ProductDto, @Res() res: Response) {
+        try {
+            const product = await this.productService.update(id, productDto, res.locals.user.id);
 
-        return res.status(HttpStatus.OK).json(successResponse);
-    } catch (error: any) {
-        const errorResponse = new ResponseDto(ResponseStatus.ERROR, error.message);
+            const successResponse = new ResponseDto(ResponseStatus.SUCCESS, SuccessMessages.PRODUCT_UPDATED, product);
 
-        return res.status(error.statusCode ?? HttpStatus.BAD_REQUEST).json(errorResponse);
+            return res.status(HttpStatus.OK).json(successResponse);
+
+        } catch (error: any) {
+            const errorResponse = new ResponseDto(ResponseStatus.ERROR, error.message);
+
+            return res.status(error.statusCode ?? HttpStatus.BAD_REQUEST).json(errorResponse);
+        }
     }
-}
 
-export const deleteProduct = async (req: Request, res: Response) => {
-    try {
-        await destroy(req.params.id, res.locals.user.id);
+    @Get('/:id')
+    async showProduct(@Param('id') id: string, @Body() req: Request, @Res() res: Response) {
+        try {
+            const product = await this.productService.show(id);
+            const successResponse = new ResponseDto(ResponseStatus.SUCCESS, SuccessMessages.PRODUCT_RETRIEVED, product);
 
-        const successResponse = new ResponseDto(
-            ResponseStatus.SUCCESS,
-            SuccessMessages.PRODUCT_DELETED,
-        );
+            return res.status(HttpStatus.OK).json(successResponse);
+        } catch (error: any) {
+            const errorResponse = new ResponseDto(ResponseStatus.ERROR, error.message);
 
-        return res.status(HttpStatus.OK).json(successResponse);
+            return res.status(error.statusCode ?? HttpStatus.BAD_REQUEST).json(errorResponse);
+        }
+    }
 
-    } catch (error: any) {
-        const errorResponse = new ResponseDto(ResponseStatus.ERROR, error.message);
+    @Delete('/:id')
+    @UseBefore(AuthenticateUser)
+    async deleteProduct(@Param('id') id: string, @Body() req: Request, @Res() res: Response) {
+        try {
+            await this.productService.destroy(id, res.locals.user.id);
 
-        return res.status(error.statusCode ?? HttpStatus.BAD_REQUEST).json(errorResponse);
+            const successResponse = new ResponseDto(
+                ResponseStatus.SUCCESS,
+                SuccessMessages.PRODUCT_DELETED,
+            );
+
+            return res.status(HttpStatus.OK).json(successResponse);
+
+        } catch (error: any) {
+            const errorResponse = new ResponseDto(ResponseStatus.ERROR, error.message);
+
+            return res.status(error.statusCode ?? HttpStatus.BAD_REQUEST).json(errorResponse);
+        }
     }
 }
