@@ -8,7 +8,7 @@ export class ProductRepository {
     }
 
     async findUserProducts(userId: string): Promise<Product[]> {
-        return ProductModel.find({userId}).sort({createdAt: 'desc'});
+        return ProductModel.find({}).sort({createdAt: 'desc'});
     }
 
     async create(payload: Partial<object>): Promise<Product> {

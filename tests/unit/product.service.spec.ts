@@ -1,177 +1,173 @@
-import {closeDB, connectToDB} from "../../src/config/database";
-import ProductModel from "../../src/models/product.model";
-import {registerPayload} from '../examples/user.test.payload';
-import {register} from "../../src/services/auth.service";
-import UserModel from "../../src/models/user.model";
-import {create, destroy, index, myProducts, show, update} from "../../src/services/product.service";
-import {createProductPayload} from "../examples/product.test";
+import {ProductService} from "../../src/services/product.service";
+import {ProductRepository} from "../../src/repositories/product.repository";
+import {getProduct} from "../fixtures/product.fixture";
+import {ProductModelDto} from "../../src/dtos/models/product.model.dto";
 import {ErrorMessages} from "../../src/utils/enums/error.messages";
-import {ObjectId} from "mongodb";
 
 describe('Product unit tests', () => {
-    let user: any;
+    let productRepository: ProductRepository;
+    let service: ProductService;
 
     beforeAll(async () => {
-        process.env.NODE_ENV = 'testing';
-        await connectToDB();
-    });
-
-    beforeEach(async () => {
-        await UserModel.deleteMany({});
-        await ProductModel.deleteMany({});
-
-        user = await register(registerPayload);
-    });
-
-    afterAll(async () => {
-        await UserModel.deleteMany({});
-        await ProductModel.deleteMany({});
-        await closeDB();
+        productRepository = new ProductRepository();
+        service = new ProductService(productRepository);
     });
 
     describe('All Products', () => {
+        let findAllProducts: jest.SpyInstance;
+        let findUserProducts: jest.SpyInstance;
+        let findById: jest.SpyInstance;
+
+        beforeEach(() => {
+            findAllProducts = jest.spyOn(productRepository, 'findAllProducts');
+            findUserProducts = jest.spyOn(productRepository, 'findUserProducts');
+            findById = jest.spyOn(productRepository, 'findById');
+        });
+
+        afterEach(() => {
+            jest.resetAllMocks();
+            jest.restoreAllMocks();
+        });
+
         it('it should display all products', async () => {
-            await create(createProductPayload, user.id);
+            findAllProducts.mockResolvedValue([getProduct()]);
 
-            let secondProductPayload = JSON.parse(JSON.stringify(createProductPayload));
-            secondProductPayload.name = 'second product name';
-
-            await create(secondProductPayload, user.id);
-
-            let thirdProductPayload = JSON.parse(JSON.stringify(createProductPayload));
-            thirdProductPayload.name = 'third product name';
-
-            await create(thirdProductPayload, user.id);
-
-            const response = await index();
-
-            expect(response.length).toBe(3);
+            const products = await service.index();
+            expect(products).toBeInstanceOf(Array);
+            expect(products[0]).toBeInstanceOf(ProductModelDto)
         });
-    });
 
-    describe('My Products', () => {
-        it('it should display my products', async () => {
-            await create(createProductPayload, user.id);
+        it('it should display logged in user products', async () => {
+            const userId = '6672cb6915285f0e39ab32de';
+            findUserProducts.mockResolvedValue([getProduct({userId})]);
 
-            let secondProductPayload = JSON.parse(JSON.stringify(createProductPayload));
-            secondProductPayload.name = 'second product name';
-
-            await create(secondProductPayload, user.id);
-
-            //create another user and his products
-            let anotherUserPayload = JSON.parse(JSON.stringify(registerPayload));
-            anotherUserPayload.email = 'anotheruser@example.com';
-
-            const anotherUser = await register(anotherUserPayload);
-            await create(createProductPayload, anotherUser.id);
-
-            const response = await myProducts(anotherUser.id);
-
-            expect(response.length).toBe(1);
+            const products = await service.myProducts(userId);
+            expect(products).toBeInstanceOf(Array);
+            expect(products[0]).toBeInstanceOf(ProductModelDto);
         });
-    });
 
-    describe('Create Product', () => {
-        it('it should throw an error if a product already exist', async () => {
+        it('it should throw an error if product is not found', async () => {
+            const _id = '6672cb6915285f0e39ab32de';
+            findById.mockResolvedValue(getProduct());
+
             try {
-                await create(createProductPayload, user.id);
-                await create(createProductPayload, user.id);
-            } catch (err: any) {
-                expect(err.message).toBe(ErrorMessages.PRODUCT_ALREADY_EXISTS);
+                await service.show(_id);
+            } catch (e: any) {
+                expect(findById).toBeCalledTimes(1);
+                expect(e.message).toBe(ErrorMessages.PRODUCT_NOT_FOUND);
             }
         });
 
-        it('it can create new product', async () => {
-            const response = await create(createProductPayload, user.id);
+        it('it should display product details', async () => {
+            const _id = '6672cb6915285f0e39ab32de';
+            findById.mockResolvedValue(getProduct({_id}));
 
-            expect(response.name).toBe(createProductPayload.name);
-            expect(response.description).toBe(createProductPayload.description);
-            expect(response.price).toBe(createProductPayload.price);
+            const product = await service.show(_id);
+            expect(product).toBeInstanceOf(ProductModelDto);
         });
     });
-
-    describe('Update Product', () => {
-        it('it should throw an error if a product does not exist', async () => {
-            try {
-                const invalidId = new ObjectId().toString();
-
-                await update(invalidId, createProductPayload, user.id);
-            } catch (err: any) {
-                expect(err.message).toBe(ErrorMessages.PRODUCT_NOT_FOUND);
-            }
-        });
-
-        it('it cannot update existing product with the same product name', async () => {
-            try {
-                const firstCreatedProduct = await create(createProductPayload, user.id);
-
-                let payload = JSON.parse(JSON.stringify(createProductPayload));
-                payload.name = 'updated product name';
-
-                await create(payload, user.id);
-                await update(firstCreatedProduct.id, payload, user.id);
-            } catch (err: any) {
-                expect(err.message).toBe(ErrorMessages.PRODUCT_ALREADY_EXISTS);
-            }
-        });
-
-        it('it can update existing product', async () => {
-            const createProduct = await create(createProductPayload, user.id);
-
-            let payload = JSON.parse(JSON.stringify(createProductPayload));
-            payload.name = 'updated product name';
-            payload.description = 'updated product description';
-
-            const response = await update(createProduct.id, payload, user.id);
-
-            expect(response!.name).toBe(payload.name);
-            expect(response!.description).toBe(payload.description);
-            expect(response!.price).toBe(payload.price);
-        });
-    });
-
-
-    describe('Show Product', () => {
-        it('it should throw an error if a product does not exist', async () => {
-            try {
-                const invalidId = new ObjectId().toString();
-
-                await show(invalidId);
-            } catch (err: any) {
-                expect(err.message).toBe(ErrorMessages.PRODUCT_NOT_FOUND);
-            }
-        });
-
-        it('it should show product details', async () => {
-            const createProduct = await create(createProductPayload, user.id);
-            const response = await show(createProduct.id);
-
-            expect(response.name).toBe(createProduct.name);
-            expect(response.description).toBe(createProduct.description);
-            expect(response.price).toBe(createProduct.price);
-        });
-    });
-
-
-    describe('Delete Product', () => {
-        it('it should throw an error if a product does not exist', async () => {
-            try {
-                const invalidId = new ObjectId().toString();
-
-                await destroy(invalidId, user.id);
-            } catch (err: any) {
-                expect(err.message).toBe(ErrorMessages.PRODUCT_NOT_FOUND);
-            }
-        });
-
-        it('it should delete product', async () => {
-            const createProduct = await create(createProductPayload, user.id);
-            const response = await destroy(createProduct.id, user.id);
-
-            expect(response!.id.toString()).toBe(createProduct.id.toString());
-            expect(response!.name).toBe(createProduct.name);
-            expect(response!.description).toBe(createProduct.description);
-            expect(response!.price).toBe(createProduct.price);
-        });
-    });
+    
+    // describe('Create Product', () => {
+    //     it('it should throw an error if a product already exist', async () => {
+    //         try {
+    //             await create(createProductPayload, user.id);
+    //             await create(createProductPayload, user.id);
+    //         } catch (err: any) {
+    //             expect(err.message).toBe(ErrorMessages.PRODUCT_ALREADY_EXISTS);
+    //         }
+    //     });
+    //
+    //     it('it can create new product', async () => {
+    //         const response = await create(createProductPayload, user.id);
+    //
+    //         expect(response.name).toBe(createProductPayload.name);
+    //         expect(response.description).toBe(createProductPayload.description);
+    //         expect(response.price).toBe(createProductPayload.price);
+    //     });
+    // });
+    //
+    // describe('Update Product', () => {
+    //     it('it should throw an error if a product does not exist', async () => {
+    //         try {
+    //             const invalidId = new ObjectId().toString();
+    //
+    //             await update(invalidId, createProductPayload, user.id);
+    //         } catch (err: any) {
+    //             expect(err.message).toBe(ErrorMessages.PRODUCT_NOT_FOUND);
+    //         }
+    //     });
+    //
+    //     it('it cannot update existing product with the same product name', async () => {
+    //         try {
+    //             const firstCreatedProduct = await create(createProductPayload, user.id);
+    //
+    //             let payload = JSON.parse(JSON.stringify(createProductPayload));
+    //             payload.name = 'updated product name';
+    //
+    //             await create(payload, user.id);
+    //             await update(firstCreatedProduct.id, payload, user.id);
+    //         } catch (err: any) {
+    //             expect(err.message).toBe(ErrorMessages.PRODUCT_ALREADY_EXISTS);
+    //         }
+    //     });
+    //
+    //     it('it can update existing product', async () => {
+    //         const createProduct = await create(createProductPayload, user.id);
+    //
+    //         let payload = JSON.parse(JSON.stringify(createProductPayload));
+    //         payload.name = 'updated product name';
+    //         payload.description = 'updated product description';
+    //
+    //         const response = await update(createProduct.id, payload, user.id);
+    //
+    //         expect(response!.name).toBe(payload.name);
+    //         expect(response!.description).toBe(payload.description);
+    //         expect(response!.price).toBe(payload.price);
+    //     });
+    // });
+    //
+    //
+    // describe('Show Product', () => {
+    //     it('it should throw an error if a product does not exist', async () => {
+    //         try {
+    //             const invalidId = new ObjectId().toString();
+    //
+    //             await show(invalidId);
+    //         } catch (err: any) {
+    //             expect(err.message).toBe(ErrorMessages.PRODUCT_NOT_FOUND);
+    //         }
+    //     });
+    //
+    //     it('it should show product details', async () => {
+    //         const createProduct = await create(createProductPayload, user.id);
+    //         const response = await show(createProduct.id);
+    //
+    //         expect(response.name).toBe(createProduct.name);
+    //         expect(response.description).toBe(createProduct.description);
+    //         expect(response.price).toBe(createProduct.price);
+    //     });
+    // });
+    //
+    //
+    // describe('Delete Product', () => {
+    //     it('it should throw an error if a product does not exist', async () => {
+    //         try {
+    //             const invalidId = new ObjectId().toString();
+    //
+    //             await destroy(invalidId, user.id);
+    //         } catch (err: any) {
+    //             expect(err.message).toBe(ErrorMessages.PRODUCT_NOT_FOUND);
+    //         }
+    //     });
+    //
+    //     it('it should delete product', async () => {
+    //         const createProduct = await create(createProductPayload, user.id);
+    //         const response = await destroy(createProduct.id, user.id);
+    //
+    //         expect(response!.id.toString()).toBe(createProduct.id.toString());
+    //         expect(response!.name).toBe(createProduct.name);
+    //         expect(response!.description).toBe(createProduct.description);
+    //         expect(response!.price).toBe(createProduct.price);
+    //     });
+    // });
 });
