@@ -4,6 +4,8 @@ import {schemaConfig} from '../utils/database/schema.config';
 @ModelOptions(schemaConfig)
 
 export class Product {
+    public _id: string;
+
     @prop({type: String, required: true})
     public userId: string;
 

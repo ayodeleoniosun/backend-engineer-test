@@ -60,7 +60,7 @@ describe('Authentication end-to-end testing', () => {
             expect(data.message).toBe(ErrorMessages.INVALID_EMAIL_SUPPLIED);
         });
 
-        it('it cannot create new user if password has less than 8 characters', async () => {
+        it('it cannot create new user if password is weak', async () => {
             let payload = JSON.parse(JSON.stringify(registerPayload));
             payload.password = '123456';
 
@@ -73,12 +73,12 @@ describe('Authentication end-to-end testing', () => {
 
             expect(response.statusCode).toBe(HttpStatus.UNPROCESSABLE_ENTITY);
             expect(data.status).toBe(ResponseStatus.ERROR);
-            expect(data.message).toBe(ErrorMessages.PASSWORD_MIN_LEGNTH_ERROR);
+            expect(data.message).toBe(ErrorMessages.PASSWORD_STRENGTH_ERROR);
         });
 
         it('it cannot create new user if passwords do not match', async () => {
             let payload = JSON.parse(JSON.stringify(registerPayload));
-            payload.password_confirmation = '123456';
+            payload.password_confirmation = 'JohnDoe@202';
 
             const response = await request(app)
                 .post(`${baseUrl}/register`)

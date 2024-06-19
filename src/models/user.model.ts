@@ -9,6 +9,8 @@ import bcrypt from 'bcryptjs';
 })
 
 export class User {
+    public _id: string;
+
     @prop({type: String, minlength: 2, maxLength: 255, required: true})
     public firstname: string;
 
@@ -26,5 +28,6 @@ export class User {
 }
 
 const UserModel = getModelForClass(User);
+//console.log(UserModel);
 
 export default UserModel;

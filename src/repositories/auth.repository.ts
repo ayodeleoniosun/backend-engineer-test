@@ -4,7 +4,7 @@ import UserModel, {User} from "../models/user.model";
 
 @Service()
 export class AuthRepository {
-    async create(payload: Partial<SignupDto>): Promise<UserModel> {
+    async create(payload: Partial<SignupDto>): Promise<User> {
         return await UserModel.create(payload);
     }
 

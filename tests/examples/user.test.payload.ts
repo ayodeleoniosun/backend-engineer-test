@@ -12,8 +12,8 @@ registerPayload = {
     firstname: faker.internet.displayName(),
     lastname: faker.internet.displayName(),
     email: faker.internet.email(),
-    password: '12345678',
-    password_confirmation: '12345678',
+    password: 'JohnDoe@2024',
+    password_confirmation: 'JohnDoe@2024',
 };
 
 export let loginPayload: {

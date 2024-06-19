@@ -12,13 +12,13 @@ export class ProductService {
     public constructor(private productRepository: ProductRepository) {
     }
 
-    async index(): Promise<ProductModel[]> {
+    async index() {
         const products = await this.productRepository.findAllProducts();
 
         return products.map((product) => new ProductModelDto(product._id, product.name, product.description, product.price, product.createdAt));
     }
 
-    async myProducts(userId: string): Promise<ProductModel[]> {
+    async myProducts(userId: string) {
         const products = await this.productRepository.findUserProducts(userId);
 
         return products.map((product) => new ProductModelDto(product._id, product.name, product.description, product.price, product.createdAt));

@@ -29,7 +29,7 @@ useExpressServer(app, {
 });
 
 
-app.get("/api", (req: Request, res: Response) => {
+app.get("/", (req: Request, res: Response) => {
     const successResponse = new ResponseDto(ResponseStatus.SUCCESS, SuccessMessages.WELCOME);
 
     return res.status(HttpStatus.OK).json(successResponse);

@@ -1,4 +1,3 @@
-import {DocumentType} from "@typegoose/typegoose";
 import {User} from "../../models/user.model";
 import jwt from "jsonwebtoken";
 import config from "../../config";
@@ -7,8 +6,8 @@ import HttpException from "../exceptions/http.exception";
 import {ErrorMessages} from "../enums/error.messages";
 import * as HttpStatus from 'http-status';
 
-export const generateToken = async (user: DocumentType<User>) => {
-    return jwt.sign({id: user.id, email: user.email}, config.jwt_secret, {expiresIn: '24h'});
+export const generateToken = async (user: Partial<User>) => {
+    return jwt.sign({id: user._id, email: user.email}, config.jwt_secret, {expiresIn: '24h'});
 }
 
 export const verifyToken = (token: string) => {

@@ -1,7 +1,7 @@
 module.exports = {
-  preset: "ts-jest",
-  testEnvironment: "node",
-  testMatch: ["**/**/*.spec.ts"],
-  verbose: true,
-  forceExit: false,
+    preset: "ts-jest",
+    testEnvironment: "node",
+    testMatch: ["**/**/*.specx.ts"],
+    verbose: true,
+    forceExit: false,
 };

@@ -160,7 +160,7 @@ describe('Product end-to-end testing', () => {
             expect(data.message).toBe(SuccessMessages.PRODUCT_CREATED);
             expect(data.data.name).toBe(createProductPayload.name);
             expect(data.data.description).toBe(createProductPayload.description);
-            expect(data.data.price).toBe(createProductPayload.price);
+            expect(data.data.price).toBe(createProductPayload.price.toLocaleString("en", {minimumFractionDigits: 2}));
         });
     });
 
@@ -240,7 +240,7 @@ describe('Product end-to-end testing', () => {
             expect(data.message).toBe(SuccessMessages.PRODUCT_UPDATED);
             expect(data.data.name).toBe(payload.name);
             expect(data.data.description).toBe(createProductPayload.description);
-            expect(data.data.price).toBe(createProductPayload.price);
+            expect(data.data.price).toBe(createProductPayload.price.toLocaleString("en", {minimumFractionDigits: 2}));
         });
     });
 
@@ -318,7 +318,7 @@ describe('Product end-to-end testing', () => {
             expect(data.status).toBe(ResponseStatus.SUCCESS);
             expect(data.message).toBe(SuccessMessages.PRODUCT_RETRIEVED);
             expect(data.data.name).toBe(createProductPayload.name);
-            expect(data.data.price).toBe(createProductPayload.price);
+            expect(data.data.price).toBe(createProductPayload.price.toLocaleString("en", {minimumFractionDigits: 2}));
         });
 
         it('it should show a product', async () => {
@@ -341,7 +341,7 @@ describe('Product end-to-end testing', () => {
             expect(data.status).toBe(ResponseStatus.SUCCESS);
             expect(data.message).toBe(SuccessMessages.PRODUCT_RETRIEVED);
             expect(data.data.name).toBe(createProductPayload.name);
-            expect(data.data.price).toBe(createProductPayload.price);
+            expect(data.data.price).toBe(createProductPayload.price.toLocaleString("en", {minimumFractionDigits: 2}));
         });
     });
 

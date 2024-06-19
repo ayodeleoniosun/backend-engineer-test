@@ -6,7 +6,7 @@ import {SuccessMessages} from "../../src/utils/enums/success.messages";
 
 describe('Index page', () => {
     it('should render welcome message', async () => {
-        const response = await request(app).get('').set('Accept', 'application/json');
+        const response = await request(app).get('/').set('Accept', 'application/json');
         const data = JSON.parse(response.text);
 
         expect(response.status).toBe(HttpStatus.OK);
