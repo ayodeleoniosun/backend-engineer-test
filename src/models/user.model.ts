@@ -1,11 +1,11 @@
 import {getModelForClass, ModelOptions, pre, prop} from "@typegoose/typegoose";
 import {schemaConfig} from '../utils/database/schema.config';
-import bcrypt from 'bcryptjs';
+import {hashPassword} from "../utils/helpers/password_hash";
 
 @ModelOptions(schemaConfig)
 
 @pre<User>("save", async function () {
-    this.password = bcrypt.hashSync(this.password, 10);
+    this.password = hashPassword(this.password);
 })
 
 export class User {

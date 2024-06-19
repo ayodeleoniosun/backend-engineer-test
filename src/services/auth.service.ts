@@ -1,6 +1,5 @@
 import HttpException from "../utils/exceptions/http.exception";
 import {generateToken} from '../utils/helpers/jwt';
-import bcrypt from "bcryptjs";
 import {ErrorMessages} from '../utils/enums/error.messages';
 import {SignupDto} from "../dtos/requests/signup.dto";
 import {UserModelDto} from "../dtos/models/user.model.dto";
@@ -8,6 +7,7 @@ import {LoginDto} from "../dtos/requests/login.dto";
 import * as HttpStatus from 'http-status';
 import {AuthRepository} from "../repositories/auth.repository";
 import {Service} from "typedi";
+import {comparePassword} from "../utils/helpers/password_hash";
 
 @Service()
 export class AuthService {
@@ -32,12 +32,12 @@ export class AuthService {
         const {email, password} = payload;
 
         const [user] = await Promise.all([this.authRepository.getUserByEmail(email)]);
-        
+
         if (!user) {
             throw new HttpException(ErrorMessages.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
         }
 
-        const result = bcrypt.compareSync(password, user.password);
+        const result = comparePassword(password, user.password);
 
         if (!result) {
             throw new HttpException(ErrorMessages.INCORRECT_LOGIN_CREDENTIALS);

@@ -2,7 +2,7 @@ import {closeDB, connectToDB} from "../../src/config/database";
 import UserModel from "../../src/models/user.model";
 import request from "supertest";
 import {app} from '../../src/app';
-import {registerPayload} from "../examples/user.test.payload";
+import {registerPayload} from "../fixtures/user.test.payload";
 import {SuccessMessages} from "../../src/utils/enums/success.messages";
 import {ErrorMessages} from "../../src/utils/enums/error.messages";
 import ProductModel from "../../src/models/product.model";

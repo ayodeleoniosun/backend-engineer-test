@@ -3,15 +3,7 @@ export class AuthMockRepository {
         return Promise.resolve(undefined);
     });
 
-    public findUserByEmail = jest.fn(() => {
-        return Promise.resolve(undefined);
-    });
-
-    public findById = jest.fn(() => {
-        return Promise.resolve(undefined);
-    });
-
-    public deleteAll = jest.fn(() => {
+    public getUserByEmail = jest.fn(() => {
         return Promise.resolve(undefined);
     });
 }

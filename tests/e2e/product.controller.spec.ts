@@ -2,14 +2,14 @@ import {closeDB, connectToDB} from "../../src/config/database";
 import UserModel from "../../src/models/user.model";
 import request from "supertest";
 import {app} from '../../src/app';
-import {createProductPayload} from "../examples/product.test";
+import {createProductPayload} from "../fixtures/product.test.payload";
 import ProductModel from "../../src/models/product.model";
 import {ErrorMessages} from "../../src/utils/enums/error.messages";
 import {SuccessMessages} from "../../src/utils/enums/success.messages";
 import {faker} from "@faker-js/faker";
 import * as HttpStatus from 'http-status';
 import {ResponseStatus} from "../../src/dtos/responses/response.interface";
-import {registerPayload} from "../examples/user.test.payload";
+import {registerPayload} from "../fixtures/user.test.payload";
 import {ObjectId} from "mongodb";
 
 describe('Product end-to-end testing', () => {
