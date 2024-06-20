@@ -26,4 +26,12 @@ export class ProductRepository {
     async findById(id: string): Promise<Product> {
         return ProductModel.findById(id);
     }
+
+    async findByIdAndUpdate(id: object, payload: object): Promise<Product> {
+        return ProductModel.findByIdAndUpdate(id, payload, {new: true});
+    }
+
+    async findByIdAndDelete(id: string): Promise<Product> {
+        return ProductModel.findByIdAndDelete(id);
+    }
 }

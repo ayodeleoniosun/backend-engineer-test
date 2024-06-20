@@ -22,4 +22,8 @@ export class ProductMockRepository {
     public findById = jest.fn(() => {
         return Promise.resolve(undefined);
     });
+
+    public findByIdAndUpdate = jest.fn(() => {
+        return Promise.resolve(undefined);
+    });
 }

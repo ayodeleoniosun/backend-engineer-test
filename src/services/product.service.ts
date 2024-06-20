@@ -1,6 +1,5 @@
 import {Service} from "typedi";
 import {ProductRepository} from "../repositories/product.repository";
-import ProductModel from "../models/product.model";
 import {ProductModelDto} from "../dtos/models/product.model.dto";
 import HttpException from "../utils/exceptions/http.exception";
 import {ErrorMessages} from "../utils/enums/error.messages";
@@ -53,18 +52,14 @@ export class ProductService {
             throw new HttpException(ErrorMessages.PRODUCT_ALREADY_EXISTS, HttpStatus.CONFLICT);
         }
 
-        const updatedProduct = ProductModel.findByIdAndUpdate(
-            {_id: id},
-            {name, description, price},
-            {new: true}
-        );
+        const updatedProduct = await this.productRepository.findByIdAndUpdate({_id: id}, {name, description, price});
 
         return new ProductModelDto(updatedProduct._id, name, description, price, updatedProduct.createdAt);
     }
 
     async show(id: string) {
         const product = await this.productRepository.findById(id);
-        
+
         if (!product) {
             throw new HttpException(ErrorMessages.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
         }
@@ -81,6 +76,6 @@ export class ProductService {
             throw new HttpException(ErrorMessages.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
         }
 
-        return ProductModel.findByIdAndDelete(id);
+        return await this.productRepository.findByIdAndDelete(id);
     }
 }
